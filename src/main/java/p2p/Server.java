@@ -1,52 +1,35 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package p2p;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
-/**
- *
- * @author My
- */
 public class Server {
 
-    public Server() throws Exception {
-        String from_client;
-        String to_client;
-        Integer port = 1106;
+    public static void main(String[] args) throws Exception {
+        ServerSocket serverSocket = new ServerSocket(1106);
+        System.out.println("Server is running and waiting for connections...");
 
-        ServerSocket serversocker = new ServerSocket(port);
-        Socket socket = serversocker.accept();
-        System.out.println("successfull" + socket);
+        // Chấp nhận kết nối từ client
+        Socket socket = serverSocket.accept();
+        System.out.println("Client connected: " + socket.getInetAddress());
+
+        // Tạo input và output streams cho client
+        DataInputStream din = new DataInputStream(socket.getInputStream());
+        DataOutputStream outToClient = new DataOutputStream(socket.getOutputStream());
+
         while (true) {
+            // Đọc thông tin từ client
+            String fromClient = din.readUTF();
+            System.out.println("From client " + socket.getInetAddress() + ": " + fromClient);
 
-            BufferedReader inFromClient
-                    = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-            //Tạo outputStream, nối tới socket
-            DataOutputStream outToClient
-                    = new DataOutputStream(socket.getOutputStream());
-
-            //Đọc thông tin từ socket
-            from_client = inFromClient.readLine();
-
-            to_client = from_client + " (Server accepted!)" + '\n';
-            //ghi dữ liệu ra socket
-            outToClient.writeBytes(to_client);
-            
+            // Gửi dữ liệu đến client
+            System.out.print("To client " + socket.getInetAddress() + ": ");
+            Scanner sc = new Scanner(System.in);
+            String toClient = sc.nextLine();
+            outToClient.writeUTF(toClient);
         }
     }
-
-    public static void main(String[] args) throws Exception {
-        Server server = new Server();
-        return;
-
-    }
-
 }

@@ -1,55 +1,91 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package p2p;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.InputStreamReader;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Scanner;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLSocket;
 
-/**
- *
- * @author My
- */
-public class Client {
+public class Client extends ConnectSocket {
 
-    public static void main(String argv[]) throws Exception {
+    public static void main(String argv[]) {
 
-        //Tạo socket cho client kết nối đến server qua ID address và port number
-        Socket clientSocket = new Socket("127.0.0.1", 1106);
-
-        
         Scanner sc = new Scanner(System.in);
 
-        while (true) {
-            System.out.print("Input from client: ");
+        try {
+            Socket socketServer = new Socket("localhost", 1106);
 
-            //Lấy chuỗi ký tự nhập từ bàn phím
-            String sentence_to_server = sc.nextLine();
+            if (socketServer.isConnected()) {
 
-            //Tạo OutputStream nối với Socket
-        DataOutputStream dos
-                = new DataOutputStream(clientSocket.getOutputStream());
+                DataInputStream din = new DataInputStream(socketServer.getInputStream());
 
-        //Tạo inputStream nối với Socket
-            DataInputStream din
-                = new DataInputStream(clientSocket.getInputStream());
+                DataOutputStream dos = new DataOutputStream(socketServer.getOutputStream());
 
-        
-            //Gửi chuỗi ký tự tới Server thông qua outputStream đã nối với Socket (ở trên)
-            dos.writeUTF(sentence_to_server + '\n');
+                while (true) {
+                    boolean checkStateListPort = din.readBoolean();
 
-            //Đọc tin từ Server thông qua InputSteam đã nối với socket
-            String sentence_from_server = din.readUTF();
+                    if (checkStateListPort == true) {
+                        System.out.println(din.readUTF());
 
-            //print kết qua ra màn hình
-            System.out.println("FROM SERVER: " + sentence_from_server);
+                        System.out.println("enter port join meet");
+                        int port = sc.nextInt();
+                        try {
+                            Socket socketClient = new Socket("localhost", port);
+
+                            DataInputStream din1 = new DataInputStream(socketClient.getInputStream());
+
+                            DataOutputStream dos1 = new DataOutputStream(socketClient.getOutputStream());
+
+                            System.out.println(din1.readUTF());
+                        } catch (Exception e) {
+                            System.out.println("don't access socket");
+                        }
+                    } else {
+                        System.out.println(din.readUTF());
+
+                        System.out.println("enter name");
+                        String name = sc.nextLine();
+                        dos.writeUTF(name);
+
+                        System.out.println("enter port create server meet");
+                        int port = sc.nextInt();
+                        dos.writeInt(port);
+
+                        // Corrected code for ServerSocket instantiation
+                        ServerSocket sSClient = new ServerSocket(port);
+
+                        try {
+                            while (true) {
+                                Socket sClinet = sSClient.accept();
+
+                                DataInputStream din2 = new DataInputStream(sClinet.getInputStream());
+                                DataOutputStream dos2 = new DataOutputStream(sClinet.getOutputStream());
+
+                                dos2.writeUTF("hello client 2");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                }
+
+            } else {
+
+                System.out.println("cannot access server");
+                System.out.println("enter port join meet");
+                int port = sc.nextInt();
+
+                Socket socketClient = new Socket("localhost", port);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("cannot access ");
 
         }
-
     }
 }

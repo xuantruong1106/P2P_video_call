@@ -26,7 +26,7 @@ public class Client {
                     if (checkStateListPort) {
                         System.out.println(din.readUTF());
 
-                        System.out.print("enter port join meet");
+                        System.out.print("enter port join meet: " );
                         String port = sc.nextLine();
                         
                         int portInt = Integer.parseInt(port);
@@ -78,13 +78,13 @@ public class Client {
                             DataOutputStream dos2 = new DataOutputStream(sClinet.getOutputStream());
                             
                             String clientName = din2.readUTF();
-                            System.out.print("Client connected: " + clientName);
+                            System.out.println("Client connected: " + clientName);
                             dos2.writeUTF("hello client " + clientName);
                             
                             while (true) {
                                 System.out.println("client aswer: " + din2.readUTF());
 
-                                System.out.print("enter message to client: ");
+                                System.out.print("enter message to client: \n");
                                 String message = sc.nextLine();
 
                                 dos2.writeUTF(message);

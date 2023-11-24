@@ -49,8 +49,7 @@ public class RemoveClientOutServer {
     }
 
     public static void main(String[] args) throws Exception {
-        // ... (same as before)
-
+        
         // Start a background thread to continuously check and update the state
         Thread backgroundThread = new Thread(() -> {
             try {
@@ -70,9 +69,6 @@ public class RemoveClientOutServer {
                             state = true;
                         }
                     }
-
-                    // Ngủ một khoảng thời gian trước khi kiểm tra lại
-                    Thread.sleep(5000); // Số miligiây, bạn có thể điều chỉnh theo nhu cầu
                 }
             } catch (Exception e) {
                 e.printStackTrace();

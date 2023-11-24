@@ -37,7 +37,7 @@ public class Client {
                             DataInputStream din1 = new DataInputStream(socketClient.getInputStream());
                             DataOutputStream dos1 = new DataOutputStream(socketClient.getOutputStream());
                             
-                            System.out.print("enter name");
+                            System.out.print("enter name: ");
                             String name1 = sc.nextLine();
                             dos1.writeUTF(name1);
                         
@@ -84,7 +84,7 @@ public class Client {
                             while (true) {
                                 System.out.println("client aswer: " + din2.readUTF());
 
-                                System.out.print("enter message to client: \n");
+                                System.out.print("enter message to client: ");
                                 String message = sc.nextLine();
 
                                 dos2.writeUTF(message);

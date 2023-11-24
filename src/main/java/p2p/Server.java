@@ -4,18 +4,15 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
-public class Server {
+public class Server extends RemoveClientOutServer {
 
-    private static final List<Integer> savePorts = new ArrayList<>();
-    private static final List<Socket> clients = new ArrayList<>();
+    private static final RemoveClientOutServer rm = new RemoveClientOutServer();
 
     public static void main(String[] args) throws Exception {
         ServerSocket serverSocket = new ServerSocket(1106);
         System.out.println("Server is running and waiting for connections...");
-
+        
         // Bắt đầu một luồng để lắng nghe các kết nối đến và gửi thông tin port
         Thread listenerThread = new Thread(() -> {
             try {
@@ -24,14 +21,17 @@ public class Server {
                     DataInputStream din = new DataInputStream(clientSocket.getInputStream());
                     DataOutputStream dos = new DataOutputStream(clientSocket.getOutputStream());
 
-                    if (savePorts.isEmpty()) {
-                        System.out.println("There are no ports stored in the array");
+                    if (rm.clientInfos.isEmpty()) {
+                        System.out.println("There are no clients connected");
                         dos.writeBoolean(false);
-                        dos.writeUTF("Hello, no ports available.");
+                        dos.writeUTF("Hello, no clients available.");
                     } else {
-                        System.out.println("There are ports stored in the array");
+                        System.out.println("There are clients connected");
                         dos.writeBoolean(true);
-                        dos.writeUTF("Hello, ports available: " + savePorts);
+
+                        for (ClientInfo info : rm.clientInfos) {
+                            dos.writeUTF("Hello, clients available: " + info.getClientName() + " Port: " + info.getPort());
+                        }
                     }
 
                     String clientName = din.readUTF();
@@ -41,14 +41,21 @@ public class Server {
                     int clientPort = din.readInt();
                     System.out.println("Received port from client: " + clientPort);
 
-                    // Lưu port vào danh sách savePorts
-                    savePorts.add(clientPort);
-
                     // Lưu thông tin client vào danh sách clients
-                    clients.add(clientSocket);
+                    ClientInfo clientInfo = new ClientInfo(clientPort, clientSocket, clientName);
+                    rm.clientInfos.add(clientInfo);
 
-                    // Optionally, you can print the current list of ports
-                    System.out.println("Current list of ports: " + savePorts);
+//                    // Print the current list of clients
+//                    for (ClientInfo info : rm.clientInfos) {
+//                        System.out.println("Client: " + info.getClientName() + " Port: " + info.getPort());
+//                    }
+
+                   
+                    // Check for notification after adding the client
+                    if (rm.getTrue() == true) {
+                        System.out.println("Client disconnected and removed from the list.");
+                    }                   
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();

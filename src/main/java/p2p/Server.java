@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Server extends RemoveClientOutServer {
 
@@ -13,45 +15,49 @@ public class Server extends RemoveClientOutServer {
         ServerSocket serverSocket = new ServerSocket(1106);
         System.out.println("Server is running and waiting for connections...");
 
-        // Bắt đầu một luồng để lắng nghe các kết nối đến và gửi thông tin port
-        Thread listenerThread = new Thread(() -> {
-            // Inside the listenerThread loop
+        while (true) {
+            Socket clientSocket = serverSocket.accept();
 
-            try {
-                while (true) {
-                    Socket clientSocket = serverSocket.accept();
-                    DataInputStream din = new DataInputStream(clientSocket.getInputStream());
-                    DataOutputStream dos = new DataOutputStream(clientSocket.getOutputStream());
-                    if (rm.clientInfos.isEmpty()) {
-                        System.out.println("There are no clients connected");
-                        dos.writeBoolean(false);
-                        dos.writeUTF("Hello, no clients available.");
-                    } else {
-                        dos.writeBoolean(true);
+            // Create a new thread to handle the client connection
+            Thread clientThread = new Thread(() -> handleClient(clientSocket));
+            clientThread.start();
+        }
+    }
 
-                        for (ClientInfo info : rm.clientInfos) {
-                            dos.writeUTF("Hello, clients available: " + info.getClientName() + " Port: " + info.getPort());
-                        }
-                    }
+    private static void handleClient(Socket clientSocket) {
+        try {
+            DataInputStream din = new DataInputStream(clientSocket.getInputStream());
+            DataOutputStream dos = new DataOutputStream(clientSocket.getOutputStream());
 
-                    String clientName = din.readUTF();
-                    System.out.println("Client connected: " + clientName);
+            if (rm.clientInfos.isEmpty()) {
+                System.out.println("There are no clients connected");
+                dos.writeBoolean(false);
+                dos.writeUTF("Hello, no clients available.");
+            } else {
+                System.out.println("There are clients connected");
+                dos.writeBoolean(true);
 
-                    // Đọc port từ client
-                    int clientPort = din.readInt();
-                    System.out.println("Received port from client: " + clientPort);
-
-                    // Lưu thông tin client vào danh sách clients
-                    ClientInfo clientInfo = new ClientInfo(clientPort, clientSocket, clientName);
-                    rm.clientInfos.add(clientInfo);
+                for (ClientInfo info : rm.clientInfos) {
+                    dos.writeUTF("Hello, clients available: " + info.getClientName() + " Port: " + info.getPort());
                 }
-            } catch (Exception e) {
-                // Handle client disconnection without stopping the server
-                System.out.println("Client disconnected.");
-                e.printStackTrace();
             }
 
-        });
-        listenerThread.start();
+            String clientName = din.readUTF();
+            System.out.println("Client connected: " + clientName);
+
+            // Read port from client
+            int clientPort = din.readInt();
+            System.out.println("Received port from client: " + clientPort);
+
+            // Save client information to the list of clients
+            ClientInfo clientInfo = new ClientInfo(clientPort, clientSocket, clientName);
+            rm.clientInfos.add(clientInfo);
+        } catch (Exception e) {
+            // Handle client disconnection without stopping the server
+            System.out.println("Client disconnected.");
+            e.printStackTrace();
+        }
     }
 }
+
+// Rest of your code remains the same

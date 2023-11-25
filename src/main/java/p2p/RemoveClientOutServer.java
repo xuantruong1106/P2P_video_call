@@ -42,40 +42,5 @@ class ClientInfo {
 public class RemoveClientOutServer {
 
     static final List<ClientInfo> clientInfos = new ArrayList<>();
-    static volatile boolean state;
-
-    public static boolean getTrue() {
-        return state;
-    }
-
-    public static void main(String[] args) throws Exception {
-        
-        // Start a background thread to continuously check and update the state
-        Thread backgroundThread = new Thread(() -> {
-            try {
-                while (true) {
-                    // Duyệt qua danh sách clients và loại bỏ những client đã đóng kết nối
-                    Iterator<ClientInfo> iterator = clientInfos.iterator();
-                    while (iterator.hasNext()) {
-                        ClientInfo clientInfo = iterator.next();
-
-                        if (clientInfo.getClientSocket().isClosed()) {
-                            // Client đã đóng kết nối, loại bỏ khỏi danh sách
-                            iterator.remove();
-
-                            // Print a message about the disconnected client
-                            System.out.println("Client disconnected: " + clientInfo.getClientName() + " with port " + clientInfo.getPort());
-
-                            state = true;
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        // Start the background thread
-        backgroundThread.start();
-    }
+   
 }

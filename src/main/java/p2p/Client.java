@@ -16,7 +16,6 @@ public class Client {
                 // Connect to the server
                 Socket socketServer = new Socket("localhost", 1106);
 
-//            if (socketServer.isConnected()) {
                 DataInputStream din = new DataInputStream(socketServer.getInputStream());
                 DataOutputStream dos = new DataOutputStream(socketServer.getOutputStream());
 
@@ -25,22 +24,25 @@ public class Client {
 
                     if (checkStateListPort) {
                         System.out.println(din.readUTF());
-
-                        System.out.print("enter port join meet: " );
-                        String port = sc.nextLine();
                         
+                        System.out.print("enter name: ");
+                        String name1 = sc.nextLine();
+                        dos.writeUTF(name1);
+
+                            
+                        System.out.print("enter port join meet: ");
+                        String port = sc.nextLine();
+
                         int portInt = Integer.parseInt(port);
-                         
+
                         try {
                             Socket socketClient = new Socket("localhost", portInt);
 
                             DataInputStream din1 = new DataInputStream(socketClient.getInputStream());
                             DataOutputStream dos1 = new DataOutputStream(socketClient.getOutputStream());
-                            
-                            System.out.print("enter name: ");
-                            String name1 = sc.nextLine();
+
                             dos1.writeUTF(name1);
-                        
+
                             while (true) {
                                 System.out.println("client aswer: " + din1.readUTF());
 
@@ -64,10 +66,10 @@ public class Client {
                         System.out.print("enter port create server meet: ");
                         String port = sc.nextLine();
                         int portInt = Integer.parseInt(port);
-                        
+
                         dos.writeInt(portInt);
                         
-                        
+                        System.out.println("waitting client connect...");
                         // Corrected code for ServerSocket instantiation
                         ServerSocket sSClient = new ServerSocket(portInt);
 
@@ -76,11 +78,11 @@ public class Client {
 
                             DataInputStream din2 = new DataInputStream(sClinet.getInputStream());
                             DataOutputStream dos2 = new DataOutputStream(sClinet.getOutputStream());
-                            
+
                             String clientName = din2.readUTF();
                             System.out.println("Client connected: " + clientName);
                             dos2.writeUTF("hello client " + clientName);
-                            
+
                             while (true) {
                                 System.out.println("client aswer: " + din2.readUTF());
 
@@ -91,41 +93,45 @@ public class Client {
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            System.out.println(" sClinet - 71");
+                            System.out.println(" sClinet - 93");
                         }
                     }
                 }
-//            } else {
-//                System.out.println("Cannot connect to the server. Please try again.");
-//                // Add any additional logic you want for this condition.
-//            }
+                //            } else {
+                //                System.out.println("Cannot connect to the server. Please try again.");
+                //                // Add any additional logic you want for this condition.
+                //            }
 
             } catch (Exception e) {
 
-                System.out.println("enter port join meet: ");
-                int port = sc.nextInt();
                 try {
-                    Socket socketClient = new Socket("localhost", port);
 
-                    DataInputStream din2 = new DataInputStream(socketClient.getInputStream());
-                    DataOutputStream dos2 = new DataOutputStream(socketClient.getOutputStream());
-                    
-                    System.out.println("enter name: ");
-                    String name = sc.nextLine();
-                    dos2.writeUTF(name);
-                    
+                    System.out.print("enter port join meet: ");
+                    String port = sc.nextLine();
+
+                    int portInt = Integer.parseInt(port);
+
+                    Socket socketClient = new Socket("localhost", portInt);
+
+                    DataInputStream din3 = new DataInputStream(socketClient.getInputStream());
+                    DataOutputStream dos3 = new DataOutputStream(socketClient.getOutputStream());
+
+                    System.out.print("enter name: ");
+                    String name1 = sc.nextLine();
+                    dos3.writeUTF(name1);
+
                     while (true) {
-                        System.out.println(" client aswer: " + din2.readUTF());
+                        System.out.println("client aswer: " + din3.readUTF());
 
-                        System.out.println("enter message to client: ");
+                        System.out.print("enter message to client: ");
                         String message = sc.nextLine();
 
-                        dos2.writeUTF(message);
+                        dos3.writeUTF(message);
                     }
 
                 } catch (Exception e1) {
                     System.out.println("don't access socket");
-                    System.out.println(" socketClient - 94");
+                    System.out.println(" socketClient - 131 ");
                 }
 
             }

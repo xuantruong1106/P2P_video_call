@@ -18,6 +18,8 @@ import javafx.scene.shape.Line;
 public class CreateVideoRoomApplicationInterface extends Application {
     private Webcam webcam;
     private boolean isCameraOn = false;
+    private boolean isMicOn = false;
+    
     @Override
     public void start(Stage primaryStage) {
 
@@ -77,6 +79,7 @@ public class CreateVideoRoomApplicationInterface extends Application {
         Platform.runLater(() -> {
             webcam = Webcam.getDefault(); // Lấy webcam mặc định
             isCameraOn = true;
+            isMicOn = true;
             webcam.setViewSize(WebcamResolution.VGA.getSize()); // Đặt kích thước hiển thị
             
             WebcamPanel panel = new WebcamPanel(webcam);
@@ -125,11 +128,7 @@ public class CreateVideoRoomApplicationInterface extends Application {
         );
         labelIconButonExitVideoRoom.setPrefSize(40, 30);
         buttonExitVideoRoom.setGraphic(labelIconButonExitVideoRoom);
-        
-        buttonOnOffVideo.setOnAction(event -> {
-            
-        });
-        
+               
         buttonOnOffVideo.setOnAction(event -> {
             if (isCameraOn) {
                 // Nếu camera đang bật, tắt nó
@@ -150,6 +149,26 @@ public class CreateVideoRoomApplicationInterface extends Application {
                     "-fx-background-image: url('file:src/main/java/com/mycompany/baitaplonmonhoc/img/IconOnVideo.png');"
                     + "-fx-background-size: 30px 30px; "
                     + "-fx-background-repeat: no-repeat;"
+                );
+            }
+        });
+        
+        buttonOnOffMic.setOnAction(event -> {
+            if(isMicOn){
+                isMicOn = false;
+                
+                labelIconButonOnOffMic.setStyle(
+                "-fx-background-image: url('file:src/main/java/com/mycompany/baitaplonmonhoc/img/IconOffMic.png');"
+                + "-fx-background-size: 30px 30px; "
+                + "-fx-background-repeat: no-repeat;"
+                );
+            }else{
+                isMicOn = true;
+                
+                labelIconButonOnOffMic.setStyle(
+                "-fx-background-image: url('file:src/main/java/com/mycompany/baitaplonmonhoc/img/IconOnMic.png');"
+                + "-fx-background-size: 30px 30px; "
+                + "-fx-background-repeat: no-repeat;"
                 );
             }
         });

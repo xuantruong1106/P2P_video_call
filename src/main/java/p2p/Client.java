@@ -42,27 +42,7 @@ public class Client {
 
                     int portInt = Integer.parseInt(port);
 
-                    try {
-                        Socket socketClient = new Socket("localhost", portInt);
-
-                        DataInputStream din1 = new DataInputStream(socketClient.getInputStream());
-                        DataOutputStream dos1 = new DataOutputStream(socketClient.getOutputStream());
-
-                        dos1.writeUTF(name1);
-
-                        while (true) {
-                            System.out.println("client aswer: " + din1.readUTF());
-
-                            System.out.print("enter message to client: ");
-                            String message = sc.nextLine();
-
-                            dos1.writeUTF(message);
-                        }
-
-                    } catch (Exception e) {
-                        System.out.println("don't access socket");
-                        System.out.println(" socketClient - 36");
-                    }
+                    
                 } else {
                     System.out.println(din.readUTF());
 

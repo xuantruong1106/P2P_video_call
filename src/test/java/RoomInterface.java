@@ -5,8 +5,6 @@ import com.github.sarxos.webcam.WebcamResolution;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.ServerSocket;
@@ -17,69 +15,98 @@ public class RoomInterface extends JFrame {
     private Webcam webcam;
     private boolean isCameraOn = false;
     private boolean isMicOn = false;
-    public static int port;
-    public static String name;
+    private static int port;
+    private static String name;
     private static boolean isHost;
-    private static WebcamPanel webcamPanelRight;
+    private WebcamPanel webcamPanelRight;
 
-    // Phương thức để hiển thị RoomInterface
-    public void displayRoomInterface(String name, int port, boolean isHost) {
+    public RoomInterface(String name, int port, boolean isHost) {
         this.name = name;
         this.port = port;
         this.isHost = isHost;
 
-        setTitle("Video Room");
-        setSize(1000, 780);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        System.out.println(this.name + this.port + this.isHost);
 
-        if (isHost) {
-            try {
-                Socket sk1 = new Socket("localhost", 1106);
-                DataInputStream din = new DataInputStream(sk1.getInputStream());
-                DataOutputStream dos = new DataOutputStream(sk1.getOutputStream());
+        SwingUtilities.invokeLater(() -> {
+            setSize(500, 700);
+            setTitle("Video Room");
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-                dos.writeUTF(name);
-                dos.writeInt(port);
+            if (isHost) {
+                System.out.println("host");
+                try {
+                    Socket sk1 = new Socket("localhost", 1106);
+                    DataInputStream din = new DataInputStream(sk1.getInputStream());
+                    DataOutputStream dos = new DataOutputStream(sk1.getOutputStream());
 
-                ServerSocket ss = new ServerSocket(port);
+                    dos.writeUTF(name + "hi");
+                    dos.writeInt(this.port);
 
-                while (true) {
-                    Socket sk = ss.accept();
+                    ServerSocket ss = new ServerSocket(this.port);
+                    new Thread(() -> {
+                        try {
+                            AccessSocket(ss);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
+
+                    
+                    JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
 
                     JPanel panelLeft = createPanelLeft();
-                    JPanel panelRight = createPanelRight(port, isHost);
-                    JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
+                    JPanel panelRight = createPanelRight(this.port, this.isHost);
+
+                    containerPanelLeftAndRight.removeAll();
                     containerPanelLeftAndRight.add(panelLeft);
                     containerPanelLeftAndRight.add(panelRight);
-                    add(containerPanelLeftAndRight);
+
+                    getContentPane().add(containerPanelLeftAndRight);
+                    revalidate();
+                    repaint();
 
                     setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                Socket s = new Socket("localhost", port);
-                JPanel panelLeft = createPanelLeft();
-                JPanel panelRight = createPanelRight(port, isHost);
-                JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
-                containerPanelLeftAndRight.add(panelLeft);
-                containerPanelLeftAndRight.add(panelRight);
-                add(containerPanelLeftAndRight);
 
-                setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-        }
+//        else {
+//            System.out.println("client");
+//            try {
+//                Socket s = new Socket("localhost", this.port);
+//                JPanel panelLeft = createPanelLeft();
+//                JPanel panelRight = createPanelRight(this.port, this.isHost);
+//
+//                JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
+//                containerPanelLeftAndRight.removeAll();
+//                containerPanelLeftAndRight.add(panelLeft);
+//                containerPanelLeftAndRight.add(panelRight);
+//
+//                getContentPane().add(containerPanelLeftAndRight);
+//                revalidate();
+//                repaint();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+        });
+    }
 
+    private int AccessSocket(ServerSocket ss) throws Exception {
+
+        
+           Socket socket = ss.accept();
+//            while (true) {
+//                
+//            }
+        
+        return 0;
     }
 
     private JPanel createPanelLeft() {
         JPanel panelLeft = new JPanel(new BorderLayout());
 
-        // Your webcam initialization code here
         webcam = Webcam.getDefault();
         webcam.setViewSize(WebcamResolution.VGA.getSize());
         isCameraOn = true;
@@ -89,7 +116,7 @@ public class RoomInterface extends JFrame {
         webcamPanel.setMirrored(true);
 
         Thread thread = new Thread(() -> {
-            webcam.open(); // Mở webcam
+            webcam.open();
             while (true) {
                 if (webcam.isOpen()) {
                     webcamPanel.start();
@@ -99,91 +126,13 @@ public class RoomInterface extends JFrame {
         thread.setDaemon(true);
         thread.start();
 
-        ImageIcon iconOnMic = new ImageIcon("src/main/java/com/mycompany/baitaplonmonhoc/img/IconOnMic.png");
-        Image scaledImage = iconOnMic.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-        ImageIcon scaledIconOnMic = new ImageIcon(scaledImage);
-        JButton buttonOnOffMic = new JButton(scaledIconOnMic);
+        JButton buttonOnOffMic = createButton("IconOnMic.png", "IconOffMic.png");
+        JButton buttonOnOffVideo = createButton("IconOnVideo.png", "IconOffVideo.png");
+        JButton buttonExitVideoRoom = createButton("IconExit.png", null);
 
-        // Load the image from file
-        ImageIcon iconOnVideo = new ImageIcon("src/main/java/com/mycompany/baitaplonmonhoc/img/IconOnVideo.png");
-        Image scaledImageVideo = iconOnVideo.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-        ImageIcon scaledIconOnVideo = new ImageIcon(scaledImageVideo);
-        JButton buttonOnOffVideo = new JButton(scaledIconOnVideo);
-
-        ImageIcon iconOnExit = new ImageIcon("src/main/java/com/mycompany/baitaplonmonhoc/img/IconExit.png");
-        Image scaledImageExit = iconOnExit.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-        ImageIcon scaledIconExit = new ImageIcon(scaledImageExit);
-        JButton buttonExitVideoRoom = new JButton(scaledIconExit);
-
-        buttonOnOffMic.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Handle mic button action
-                if (isMicOn) {
-
-                    isMicOn = false;
-
-                    ImageIcon iconOnMic = new ImageIcon("src/main/java/com/mycompany/baitaplonmonhoc/img/IconOnMic.png");
-                    Image scaledImageMic = iconOnMic.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-                    ImageIcon scaledIconOnMic = new ImageIcon(scaledImageMic);
-                    buttonOnOffMic.setIcon(scaledIconOnMic);
-
-                } else {
-                    isMicOn = true;
-
-                    ImageIcon iconOffMic = new ImageIcon("src/main/java/com/mycompany/baitaplonmonhoc/img/IconOffMic.png");
-                    Image scaledImageMic = iconOffMic.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-                    ImageIcon scaledIconOffMic = new ImageIcon(scaledImageMic);
-                    buttonOnOffMic.setIcon(scaledIconOffMic);
-                }
-            }
-        });
-
-        buttonOnOffVideo.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (isCameraOn) {
-
-                    webcam.open();
-                    isCameraOn = false;
-                    // If video is currently on, turn it off
-
-                    // Load the image from file
-                    ImageIcon iconOnVideo = new ImageIcon("src/main/java/com/mycompany/baitaplonmonhoc/img/IconOnVideo.png");
-
-                    // Scale the image to the desired size
-                    Image scaledImageVideo = iconOnVideo.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-
-                    // Create a new ImageIcon with the scaled image
-                    ImageIcon scaledIconOnVideo = new ImageIcon(scaledImageVideo);
-
-                    buttonOnOffVideo.setIcon(scaledIconOnVideo);
-
-                } else {
-                    webcam.close();
-                    isCameraOn = true;
-                    ImageIcon iconOnVideo = new ImageIcon("src/main/java/com/mycompany/baitaplonmonhoc/img/IconOffVideo.png");
-
-                    // Scale the image to the desired size
-                    Image scaledImageVideo = iconOnVideo.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-
-                    // Create a new ImageIcon with the scaled image
-                    ImageIcon scaledIconOnVideo = new ImageIcon(scaledImageVideo);
-
-                    buttonOnOffVideo.setIcon(scaledIconOnVideo);
-                }
-            }
-        });
-
-        buttonExitVideoRoom.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose(); // Close the JFrame
-                setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                MainInterface main = new MainInterface();
-                main.setVisible(true);
-            }
-        });
+        buttonOnOffMic.addActionListener(e -> toggleMic(buttonOnOffMic));
+        buttonOnOffVideo.addActionListener(e -> toggleVideo(buttonOnOffVideo));
+        buttonExitVideoRoom.addActionListener(e -> exitVideoRoom());
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(buttonOnOffMic);
@@ -196,16 +145,33 @@ public class RoomInterface extends JFrame {
         return panelLeft;
     }
 
+    private JButton createButton(String iconOnPath, String iconOffPath) {
+        ImageIcon iconOn = new ImageIcon("src/main/java/com/mycompany/baitaplonmonhoc/img/" + iconOnPath);
+        Image scaledImage = iconOn.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+        ImageIcon scaledIconOn = new ImageIcon(scaledImage);
+
+        JButton button = new JButton(scaledIconOn);
+
+        if (iconOffPath != null) {
+            ImageIcon iconOff = new ImageIcon("src/main/java/com/mycompany/baitaplonmonhoc/img/" + iconOffPath);
+            Image scaledImageOff = iconOff.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+            ImageIcon scaledIconOff = new ImageIcon(scaledImageOff);
+
+            button.addActionListener(e -> button.setIcon(scaledIconOff));
+        }
+
+        return button;
+    }
+
     private JPanel createPanelRight(int port, boolean isHost) {
         JPanel panelRight = new JPanel(new BorderLayout());
-        String portString = String.valueOf(port);
+        String portString = String.valueOf(this.port);
 
-        if (isHost) {
+        if (this.isHost) {
             JLabel labelIDRoom = new JLabel("Room Port: " + portString);
             panelRight.add(labelIDRoom, BorderLayout.NORTH);
             // Your panelRight creation code here
         } else {
-            // Create a new WebcamPanel for the client
             Webcam clientWebcam = Webcam.getDefault();
             clientWebcam.setViewSize(WebcamResolution.VGA.getSize());
             webcamPanelRight = new WebcamPanel(clientWebcam);
@@ -216,4 +182,44 @@ public class RoomInterface extends JFrame {
 
         return panelRight;
     }
+
+    private void toggleMic(JButton buttonOnOffMic) {
+        isMicOn = !isMicOn;
+        ImageIcon newIcon = new ImageIcon("src/main/java/com/mycompany/baitaplonmonhoc/img/"
+                + (isMicOn ? "IconOnMic.png" : "IconOffMic.png"));
+        Image scaledImageMic = newIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+        buttonOnOffMic.setIcon(new ImageIcon(scaledImageMic));
+    }
+
+    private void toggleVideo(JButton buttonOnOffVideo) {
+        if (isCameraOn) {
+            webcam.open();
+            isCameraOn = false;
+            ImageIcon newIcon = new ImageIcon("src/main/java/com/mycompany/baitaplonmonhoc/img/IconOnVideo.png");
+            Image scaledImageVideo = newIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+            buttonOnOffVideo.setIcon(new ImageIcon(scaledImageVideo));
+        } else {
+            webcam.close();
+            isCameraOn = true;
+            ImageIcon newIcon = new ImageIcon("src/main/java/com/mycompany/baitaplonmonhoc/img/IconOffVideo.png");
+            Image scaledImageVideo = newIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+            buttonOnOffVideo.setIcon(new ImageIcon(scaledImageVideo));
+        }
+    }
+
+    private void exitVideoRoom() {
+        dispose();
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        MainInterface main = new MainInterface();
+        main.setVisible(true);
+        setVisible(false);
+        dispose();
+    }
+
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(() -> {
+//            RoomInterface roomInterface = new RoomInterface(this.name, this.port, this.isHost);
+//            roomInterface.setVisible(true);
+//        });
+//    }
 }

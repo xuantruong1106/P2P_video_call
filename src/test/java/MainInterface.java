@@ -25,10 +25,12 @@ public class MainInterface extends JFrame {
         add(panel, BorderLayout.CENTER);
 
         buttonCreateVideoRoom.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 IP_Name ui1 = new IP_Name();
                 ui1.setVisible(true);
                 dispose();
+                
             }
         });
 
@@ -41,10 +43,13 @@ public class MainInterface extends JFrame {
              dispose();
             
         });
+        
+        setLocationRelativeTo(null);
     }
 
     public static void main(String[] args) {
         MainInterface main = new MainInterface();
+        
         main.setVisible(true);
     }
 }

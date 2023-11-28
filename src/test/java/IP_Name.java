@@ -10,12 +10,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Scanner;
 
-
 public class IP_Name extends JFrame {
 
     Scanner scanner = new Scanner(System.in);
-    int port;
-    String name;
 
     public IP_Name() {
         // Tạo một JFrame mới
@@ -55,21 +52,22 @@ public class IP_Name extends JFrame {
         // Căn giữa JFrame trên màn hình
         setLocationRelativeTo(null);
 
-        buttonJoin.addActionListener(new ActionListener() {
+        buttonJoin.addActionListener((var arg0) -> {
+            String name = textFieldEnterName.getText();
+            int port = Integer.parseInt(textFieldEnterPort.getText());
+            boolean isHost = true;
 
-            public void actionPerformed(ActionEvent arg0) {
+            RoomInterface ri = new RoomInterface(name, port, isHost);
+            
+            
+            ri. setLocationRelativeTo(null);
+            ri.setVisible(true);
 
-                name = textFieldEnterName.getText();
-                port = Integer.parseInt(textFieldEnterPort.getText());
-
-                RoomInterface ri = new RoomInterface();
-                ri.displayRoomInterface(name, port, true);
-                dispose();
-                ri.setVisible(true);
-               
-
-            }
-
+            // Other actions
+            dispose();
+            setVisible(false);
         });
+
     }
+
 }

@@ -1,11 +1,18 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class NameJoin extends JFrame {
+public class Enter_Name_Join__VIdeo_Room extends JFrame {
 
-    public NameJoin(int port) {
+    public Enter_Name_Join__VIdeo_Room(int port) throws Exception {
         // Set layout manager
         setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
 
@@ -34,7 +41,18 @@ public class NameJoin extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 // Add your logic for the button click here
                 String enterName = textFieldEnterName.getText();
-                
+                boolean isHost = false;
+//                     DataInputStream din = new DataInputStream(sk.getInputStream());
+//                     DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
+
+                RoomInterface ri = new RoomInterface(enterName, port, isHost);
+                ri.setLocationRelativeTo(null);
+                ri.setVisible(true);
+
+                // Other actions
+                dispose();
+                setVisible(false);
+
             }
         });
 

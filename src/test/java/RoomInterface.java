@@ -13,8 +13,8 @@ import java.net.Socket;
 public class RoomInterface extends JFrame {
 
     private Webcam webcam;
-    private boolean isCameraOn = false;
-    private boolean isMicOn = false;
+    private boolean isCameraOn = true;
+    private boolean isMicOn = true;
     private static int port;
     private static String name;
     private static boolean isHost;
@@ -35,22 +35,18 @@ public class RoomInterface extends JFrame {
             if (isHost) {
                 System.out.println("host");
                 try {
-                    Socket sk1 = new Socket("localhost", 1106);
-                    DataInputStream din = new DataInputStream(sk1.getInputStream());
-                    DataOutputStream dos = new DataOutputStream(sk1.getOutputStream());
-
-                    dos.writeUTF(name + "hi");
-                    dos.writeInt(this.port);
+                    
 
                     ServerSocket ss = new ServerSocket(this.port);
                     new Thread(() -> {
                         try {
-                            AccessSocket(ss);
+                            ss.accept();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }).start();
-
+                    
+                    System.out.println("create server socket host done");
                     
                     JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
 
@@ -71,25 +67,29 @@ public class RoomInterface extends JFrame {
                 }
 
             }
-//        else {
-//            System.out.println("client");
-//            try {
-//                Socket s = new Socket("localhost", this.port);
-//                JPanel panelLeft = createPanelLeft();
-//                JPanel panelRight = createPanelRight(this.port, this.isHost);
-//
-//                JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
-//                containerPanelLeftAndRight.removeAll();
-//                containerPanelLeftAndRight.add(panelLeft);
-//                containerPanelLeftAndRight.add(panelRight);
-//
-//                getContentPane().add(containerPanelLeftAndRight);
-//                revalidate();
-//                repaint();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
+        else {
+            System.out.println("client");
+            try {
+                Socket s = new Socket("localhost", this.port);
+                
+                JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
+                
+                JPanel panelLeft = createPanelLeft();
+                JPanel panelRight = createPanelRight(this.port, this.isHost);
+
+                containerPanelLeftAndRight.removeAll();
+                containerPanelLeftAndRight.add(panelLeft);
+                containerPanelLeftAndRight.add(panelRight);
+
+                getContentPane().add(containerPanelLeftAndRight);
+                revalidate();
+                repaint();
+                
+                setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         });
     }
 
@@ -152,13 +152,13 @@ public class RoomInterface extends JFrame {
 
         JButton button = new JButton(scaledIconOn);
 
-        if (iconOffPath != null) {
-            ImageIcon iconOff = new ImageIcon("src/main/java/com/mycompany/baitaplonmonhoc/img/" + iconOffPath);
-            Image scaledImageOff = iconOff.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-            ImageIcon scaledIconOff = new ImageIcon(scaledImageOff);
-
-            button.addActionListener(e -> button.setIcon(scaledIconOff));
-        }
+//        if (iconOffPath != null) {
+//            ImageIcon iconOff = new ImageIcon("src/main/java/com/mycompany/baitaplonmonhoc/img/" + iconOffPath);
+//            Image scaledImageOff = iconOff.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+//            ImageIcon scaledIconOff = new ImageIcon(scaledImageOff);
+//
+//            button.addActionListener(e -> button.setIcon(scaledIconOff));
+//        }
 
         return button;
     }

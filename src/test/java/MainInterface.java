@@ -1,7 +1,11 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MainInterface extends JFrame {
 
@@ -27,29 +31,38 @@ public class MainInterface extends JFrame {
         buttonCreateVideoRoom.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                IP_Name ui1 = new IP_Name();
+                Create_Host_Video_Room ui1 = new Create_Host_Video_Room();
                 ui1.setVisible(true);
                 dispose();
-                
+
             }
         });
 
         buttonJoin.addActionListener(e -> {
             System.out.println("Button Join clicked");
             // Thêm mã xử lý cho sự kiện tương ứng với JavaFX
-            int port = Integer.parseInt(textFieldEnterIP.getText());
-            NameJoin nj = new NameJoin(port);
-            nj.setVisible(true);
-             dispose();
+
+            Enter_Name_Join__VIdeo_Room nj;
             
+            try {
+                int port = Integer.parseInt(textFieldEnterIP.getText());
+                Socket sk = new Socket("localhost", port);
+                nj = new Enter_Name_Join__VIdeo_Room(port);
+                nj.setVisible(true);
+                dispose();
+            } catch (Exception ex) {
+                Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Không thể kết nối đến máy chủ.", "Lỗi Kết Nối", JOptionPane.ERROR_MESSAGE);
+            }
+
         });
-        
+
         setLocationRelativeTo(null);
     }
 
     public static void main(String[] args) {
         MainInterface main = new MainInterface();
-        
+
         main.setVisible(true);
     }
 }

@@ -8,13 +8,20 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
-public class IP_Name extends JFrame {
+public class Create_Host_Video_Room extends JFrame {
 
     Scanner scanner = new Scanner(System.in);
 
-    public IP_Name() {
+    public Create_Host_Video_Room() {
         // Tạo một JFrame mới
 
         setTitle("Create Room");
@@ -57,15 +64,31 @@ public class IP_Name extends JFrame {
             int port = Integer.parseInt(textFieldEnterPort.getText());
             boolean isHost = true;
 
-            RoomInterface ri = new RoomInterface(name, port, isHost);
-            
-            
-            ri. setLocationRelativeTo(null);
-            ri.setVisible(true);
+            Socket sk1;
+            try {
+                sk1 = new Socket("localhost", 1106);
+                
+                
+                DataInputStream din = new DataInputStream(sk1.getInputStream());
+                DataOutputStream dos = new DataOutputStream(sk1.getOutputStream());
 
-            // Other actions
-            dispose();
-            setVisible(false);
+                dos.writeUTF(name);
+                dos.writeInt(port);
+
+                RoomInterface ri = new RoomInterface(name, port, isHost);
+
+                ri.setLocationRelativeTo(null);
+                ri.setVisible(true);
+
+                // Other actions
+                dispose();
+                setVisible(false);
+            } catch (IOException ex) {
+                Logger.getLogger(Create_Host_Video_Room.class.getName()).log(Level.SEVERE, null, ex);
+                 ex.printStackTrace(); // In thông báo lỗi ra console (hoặc xử lý theo ý bạn)
+                 JOptionPane.showMessageDialog(this, "Không thể kết nối đến máy chủ.", "Lỗi Kết Nối", JOptionPane.ERROR_MESSAGE);
+            }
+
         });
 
     }

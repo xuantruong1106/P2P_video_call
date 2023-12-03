@@ -35,7 +35,7 @@ public class RoomInterface extends JFrame {
             if (isHost) {
                 System.out.println("host");
                 try {
-         
+
                     ServerSocket ss = new ServerSocket(this.port);
                     new Thread(() -> {
                         try {
@@ -45,7 +45,7 @@ public class RoomInterface extends JFrame {
                             e.printStackTrace();
                         }
                     }).start();
-                    
+
                     JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
 
                     JPanel panelLeft = createPanelLeft();
@@ -64,41 +64,39 @@ public class RoomInterface extends JFrame {
                     e.printStackTrace();
                 }
 
-            }
-        else {
-            System.out.println("client");
-            try {
-                Socket s = new Socket("localhost", this.port);
-                
-                JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
-                
-                JPanel panelLeft = createPanelLeft();
-                JPanel panelRight = createPanelRight(this.port, this.isHost);
+            } else {
+                System.out.println("client");
+                try {
+                    Socket s = new Socket("192.168.0.146", this.port);
 
-                containerPanelLeftAndRight.removeAll();
-                containerPanelLeftAndRight.add(panelLeft);
-                containerPanelLeftAndRight.add(panelRight);
+                    JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
 
-                getContentPane().add(containerPanelLeftAndRight);
-                revalidate();
-                repaint();
-                
-                setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
+                    JPanel panelLeft = createPanelLeft();
+                    JPanel panelRight = createPanelRight(this.port, this.isHost);
+
+                    containerPanelLeftAndRight.removeAll();
+                    containerPanelLeftAndRight.add(panelLeft);
+                    containerPanelLeftAndRight.add(panelRight);
+
+                    getContentPane().add(containerPanelLeftAndRight);
+                    revalidate();
+                    repaint();
+
+                    setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }
         });
     }
 
     private int AccessSocket(ServerSocket ss) throws Exception {
 
-        
-           Socket socket = ss.accept();
+        Socket socket = ss.accept();
 //            while (true) {
 //                
 //            }
-        
+
         return 0;
     }
 
@@ -106,7 +104,8 @@ public class RoomInterface extends JFrame {
         JPanel panelLeft = new JPanel(new BorderLayout());
 
         webcam = Webcam.getDefault();
-        webcam.setViewSize(WebcamResolution.VGA.getSize());
+        webcam.setViewSize(new Dimension(640, 480)); // Set the desired size
+
         isCameraOn = true;
         isMicOn = true;
 
@@ -157,7 +156,6 @@ public class RoomInterface extends JFrame {
 //
 //            button.addActionListener(e -> button.setIcon(scaledIconOff));
 //        }
-
         return button;
     }
 

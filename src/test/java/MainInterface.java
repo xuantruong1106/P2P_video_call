@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MainInterface extends JFrame {
-
+     String IP_Server = "192.168.0.146";
     public MainInterface() {
         setTitle("Simple Swing App");
         setSize(500, 100);
@@ -46,7 +46,7 @@ public class MainInterface extends JFrame {
             
             try {
                 int port = Integer.parseInt(textFieldEnterIP.getText());
-                Socket sk = new Socket("localhost", port);
+                Socket sk = new Socket(IP_Server, port);
                 nj = new Enter_Name_Join__VIdeo_Room(port);
                 nj.setVisible(true);
                 dispose();

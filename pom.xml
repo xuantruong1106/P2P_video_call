@@ -46,7 +46,19 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.32</version> <!-- Thay đổi phiên bản thành phiên bản mới nhất -->
         </dependency>
-
+        
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv-platform</artifactId>
+            <version>1.5.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>opencv</artifactId>
+            <version>4.7.0-1.5.9</version>
+            <scope>test</scope>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     
     <properties>

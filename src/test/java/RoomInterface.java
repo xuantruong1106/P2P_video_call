@@ -35,18 +35,16 @@ public class RoomInterface extends JFrame {
             if (isHost) {
                 System.out.println("host");
                 try {
-                    
-
+         
                     ServerSocket ss = new ServerSocket(this.port);
                     new Thread(() -> {
                         try {
                             ss.accept();
+                            System.out.println("create server socket host done");
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }).start();
-                    
-                    System.out.println("create server socket host done");
                     
                     JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
 

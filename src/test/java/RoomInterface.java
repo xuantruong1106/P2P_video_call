@@ -15,7 +15,6 @@ import org.bytedeco.opencv.opencv_core.Size;
 import org.bytedeco.opencv.opencv_java;
 import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 
-
 public class RoomInterface extends JFrame {
 
     private Webcam webcam;
@@ -110,7 +109,17 @@ public class RoomInterface extends JFrame {
         JPanel panelLeft = new JPanel(new BorderLayout());
 
         webcam = Webcam.getDefault();
-        webcam.setViewSize(new Dimension(640, 480)); // Set the desired size
+
+// Đảm bảo rằng webcam đã được đóng
+        if (webcam.isOpen()) {
+            webcam.close();
+        }
+
+// Bây giờ bạn có thể thay đổi độ phân giải
+        webcam.setViewSize(new Dimension(640, 480));
+
+// Sau đó, bạn có thể mở lại webcam
+        webcam.open();
 
         isCameraOn = true;
         isMicOn = true;

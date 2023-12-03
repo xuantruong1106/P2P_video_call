@@ -18,7 +18,8 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class Create_Host_Video_Room extends JFrame {
-
+    
+    String IP_Server = "192.168.0.146";
     Scanner scanner = new Scanner(System.in);
 
     public Create_Host_Video_Room() {
@@ -66,7 +67,7 @@ public class Create_Host_Video_Room extends JFrame {
 
             Socket sk1;
             try {
-                sk1 = new Socket("localhost", 1106);
+                sk1 = new Socket(IP_Server, 1106);
                 
                 
                 DataInputStream din = new DataInputStream(sk1.getInputStream());

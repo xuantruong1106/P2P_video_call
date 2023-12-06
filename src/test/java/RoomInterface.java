@@ -14,10 +14,6 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.Size;
-import org.bytedeco.opencv.opencv_java;
-import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 
 public class RoomInterface extends JFrame {
 

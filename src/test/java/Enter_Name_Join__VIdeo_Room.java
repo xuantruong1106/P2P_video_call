@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 
 public class Enter_Name_Join__VIdeo_Room extends JFrame {
     
-    public Enter_Name_Join__VIdeo_Room(int port) throws Exception {
+    public Enter_Name_Join__VIdeo_Room(String IP_Server, int port) throws Exception {
         // Set layout manager
         setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
 
@@ -45,7 +45,7 @@ public class Enter_Name_Join__VIdeo_Room extends JFrame {
 //                     DataInputStream din = new DataInputStream(sk.getInputStream());
 //                     DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
 
-                RoomInterface ri = new RoomInterface(enterName, port, isHost);
+                RoomInterface ri = new RoomInterface(IP_Server, port, enterName, isHost);
                 ri.setLocationRelativeTo(null);
                 ri.setVisible(true);
 

@@ -11,9 +11,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-
 
 public class RoomInterface extends JFrame {
 
@@ -24,173 +24,78 @@ public class RoomInterface extends JFrame {
     private static String name;
     private static boolean isHost;
     private WebcamPanel webcamPanelRight;
+    private Socket s;
+    private boolean haveClients = false;
+    private String IP_Server;
 
-//    public RoomInterface(String name, int port, boolean isHost) {
-//        this.name = name;
-//        this.port = port;
-//        this.isHost = isHost;
-//
-//        System.out.println(this.name + this.port + this.isHost);
-//
-//        SwingUtilities.invokeLater(() -> {
-//            setSize(500, 700);
-//            setTitle("Video Room");
-//            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//
-//            if (isHost) {
-//                System.out.println("host");
-//                try {
-//
-//                    ServerSocket ss = new ServerSocket(this.port);
-//                    Socket sk = ss.accept();
-//                    System.out.println("create server socket host done");
-//                    ObjectInputStream inputStream = new ObjectInputStream(sk.getInputStream());
-//                    ObjectOutputStream outputStream = new ObjectOutputStream(sk.getOutputStream());
-//
-//                    new Thread(() -> {
-//                        try {
-//                            while (true) {
-//                                BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
-//                                // Display receivedImage on the client's GUI
-//                            }
-//                        } catch (IOException | ClassNotFoundException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }).start();
-//
-//                    new Thread(() -> {
-//                        try {
-//                            while (true) {
-//                                // Assuming you have a method to capture the webcam image, e.g., captureWebcamImage()
-//                                BufferedImage webcamImage = captureWebcamImage();
-//                                outputStream.writeObject(webcamImage);
-//                                outputStream.flush();
-//                            }
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }).start();
-//
-//                    JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
-//
-//                    JPanel panelLeft = createPanelLeft();
-//                    JPanel panelRight = createPanelRight(this.port, this.isHost);
-//
-//                    containerPanelLeftAndRight.removeAll();
-//                    containerPanelLeftAndRight.add(panelLeft);
-//                    containerPanelLeftAndRight.add(panelRight);
-//
-//                    getContentPane().add(containerPanelLeftAndRight);
-//                    revalidate();
-//                    repaint();
-//
-//                    setVisible(true);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//            } else {
-//                System.out.println("client");
-//                try {
-//                    Socket s = new Socket("192.168.0.146", this.port);
-//
-//                    ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
-//                    ObjectOutputStream outputStream = new ObjectOutputStream(s.getOutputStream());
-//
-//                    new Thread(() -> {
-//                        try {
-//                            while (true) {
-//                                BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
-//                                // Display receivedImage on the client's GUI
-//                            }
-//                        } catch (IOException | ClassNotFoundException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }).start();
-//
-//                    new Thread(() -> {
-//                        try {
-//                            while (true) {
-//                                // Assuming you have a method to capture the webcam image, e.g., captureWebcamImage()
-//                                BufferedImage webcamImage = captureWebcamImage();
-//                                outputStream.writeObject(webcamImage);
-//                                outputStream.flush();
-//                            }
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }).start();
-//
-//                    // Modify your loop to receive and display frames
-//                    JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
-//
-//                    JPanel panelLeft = createPanelLeft();
-//                    JPanel panelRight = createPanelRight(this.port, this.isHost);
-//
-//                    containerPanelLeftAndRight.removeAll();
-//                    containerPanelLeftAndRight.add(panelLeft);
-//                    containerPanelLeftAndRight.add(panelRight);
-//
-//                    getContentPane().add(containerPanelLeftAndRight);
-//                    revalidate();
-//                    repaint();
-//
-//                    setVisible(true);
-//
-//                    while (true) {
-//
-//                        BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
-//                        // Display receivedImage on the client's GUI
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//    }
-     public RoomInterface(String name, int port, boolean isHost) {
+    public RoomInterface(String IP_Server, int port, String name, boolean isHost) {
         this.name = name;
         this.port = port;
         this.isHost = isHost;
+        this.IP_Server = IP_Server;
+
+        System.out.println(this.name + this.port + this.isHost);
 
         SwingUtilities.invokeLater(() -> {
-            setSize(500, 700);
+            setSize(800, 400);
             setTitle("Video Room");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
             if (isHost) {
                 System.out.println("host");
                 try {
+
                     ServerSocket ss = new ServerSocket(this.port);
-                    Socket sk = ss.accept();
-                    System.out.println("create server socket host done");
-                    ObjectInputStream inputStream = new ObjectInputStream(sk.getInputStream());
-                    ObjectOutputStream outputStream = new ObjectOutputStream(sk.getOutputStream());
+                    new Thread(() -> {
+                        try {
+                            ss.accept();
+                            System.out.println("create server socket host done");
+                            haveClients = true;
 
-                    startImageReceiverThread(inputStream);
-                    startImageSenderThread(outputStream);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
 
-                    setupGUI();
+                    JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
+
+                    JPanel panelLeft = createPanelLeft(this.isHost);
+                    JPanel panelRight = createPanelRight(this.port, this.isHost);
+
+                    containerPanelLeftAndRight.removeAll();
+                    containerPanelLeftAndRight.add(panelLeft);
+                    containerPanelLeftAndRight.add(panelRight);
+
+                    getContentPane().add(containerPanelLeftAndRight);
+                    revalidate();
+                    repaint();
+
+                    setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
             } else {
                 System.out.println("client");
                 try {
-                    Socket s = new Socket("192.168.0.146", this.port);
+                    s = new Socket(IP_Server, this.port);
 
-                    ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
-                    ObjectOutputStream outputStream = new ObjectOutputStream(s.getOutputStream());
+                    // Modify your loop to receive and display frames
+                    JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
 
-                    startImageReceiverThread(inputStream);
-                    startImageSenderThread(outputStream);
+                    JPanel panelLeft = createPanelLeft(this.isHost);
+                    JPanel panelRight = createPanelRight(this.port, this.isHost);
 
-                    setupGUI();
+                    containerPanelLeftAndRight.removeAll();
+                    containerPanelLeftAndRight.add(panelLeft);
+                    containerPanelLeftAndRight.add(panelRight);
 
-                    while (true) {
-                        BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
-                        // Display receivedImage on the client's GUI
-                    }
+                    getContentPane().add(containerPanelLeftAndRight);
+                    revalidate();
+                    repaint();
+
+                    setVisible(true);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -198,89 +103,48 @@ public class RoomInterface extends JFrame {
         });
     }
 
-    private void startImageReceiverThread(ObjectInputStream inputStream) {
+    private JPanel createPanelLeft(boolean isHost) throws IOException {
+        JPanel panelLeft = new JPanel(new BorderLayout());
+
+         if (haveClients && !isHost) {
+        // If there are clients and this is not the host
+        ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
+        JPanel videoDisplayPanel = new JPanel();
+
         new Thread(() -> {
             try {
                 while (true) {
                     BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
-                    // Display receivedImage on the client's GUI
+                    // Assuming you have a method to update the video display
+                    updateVideoDisplay(videoDisplayPanel, receivedImage);
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }).start();
-    }
+    } else if (haveClients && isHost) {
+        // If there are clients and this is the host
+        WebcamPanel webcamPanel = initializeWebcam();
+        panelLeft.add(webcamPanel, BorderLayout.CENTER);
 
-    private void startImageSenderThread(ObjectOutputStream outputStream) {
         new Thread(() -> {
             try {
+                ObjectOutputStream outputStream = new ObjectOutputStream(s.getOutputStream());
+
                 while (true) {
-                    BufferedImage webcamImage = captureWebcamImage();
-                    outputStream.writeObject(webcamImage);
-                    outputStream.flush();
+                    BufferedImage currentFrame = new BufferedImage(WIDTH, HEIGHT, HEIGHT);
+                    outputStream.writeObject(currentFrame);
                 }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }).start();
+    } else {
+        // If there are no clients
+        WebcamPanel webcamPanel = initializeWebcam();
+        panelLeft.add(webcamPanel, BorderLayout.CENTER);
     }
-
-    private void setupGUI() {
-        JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
-        JPanel panelLeft = createPanelLeft();
-        JPanel panelRight = createPanelRight(this.port, this.isHost);
-
-        containerPanelLeftAndRight.removeAll();
-        containerPanelLeftAndRight.add(panelLeft);
-        containerPanelLeftAndRight.add(panelRight);
-
-        getContentPane().add(containerPanelLeftAndRight);
-        revalidate();
-        repaint();
-
-        setVisible(true);
-    }
-
-    private BufferedImage captureWebcamImage() {
-        // Implement your webcam capture logic here
-        if (webcam != null && webcam.isOpen()) {
-            return webcam.getImage();
-        }
-        return null;
-    }
-
-    private JPanel createPanelLeft() {
-        JPanel panelLeft = new JPanel(new BorderLayout());
-
-        webcam = Webcam.getDefault();
-
-// Đảm bảo rằng webcam đã được đóng
-        if (webcam.isOpen()) {
-            webcam.close();
-            // Bây giờ bạn có thể thay đổi độ phân giải
-
-        }
-
-        webcam.setViewSize(new Dimension(640, 480));
-// Sau đó, bạn có thể mở lại webcam
-        webcam.open();
-
-        isCameraOn = true;
-        isMicOn = true;
-
-        WebcamPanel webcamPanel = new WebcamPanel(webcam);
-        webcamPanel.setMirrored(true);
-
-        Thread thread = new Thread(() -> {
-            webcam.open();
-            while (true) {
-                if (webcam.isOpen()) {
-                    webcamPanel.start();
-                }
-            }
-        });
-        thread.setDaemon(true);
-        thread.start();
 
         JButton buttonOnOffMic = createButton("IconOnMic.png", "IconOffMic.png");
         JButton buttonOnOffVideo = createButton("IconOnVideo.png", "IconOffVideo.png");
@@ -295,12 +159,40 @@ public class RoomInterface extends JFrame {
         buttonPanel.add(buttonOnOffVideo);
         buttonPanel.add(buttonExitVideoRoom);
 
-        panelLeft.add(webcamPanel, BorderLayout.CENTER);
+        
         panelLeft.add(buttonPanel, BorderLayout.SOUTH);
 
         return panelLeft;
     }
 
+    private WebcamPanel initializeWebcam() {
+    webcam = Webcam.getDefault();
+    if (webcam.isOpen()) {
+        webcam.close();
+    }
+    webcam.setViewSize(new Dimension(640, 480));
+    webcam.open();
+
+    isCameraOn = true;
+    isMicOn = true;
+
+    WebcamPanel webcamPanel = new WebcamPanel(webcam);
+    webcamPanel.setMirrored(true);
+
+    Thread thread = new Thread(() -> {
+        webcam.open();
+        while (true) {
+            if (webcam.isOpen()) {
+                webcamPanel.start();
+            }
+        }
+    });
+    thread.setDaemon(true);
+    thread.start();
+
+    return webcamPanel;
+}
+    
     private JButton createButton(String iconOnPath, String iconOffPath) {
         ImageIcon iconOn = new ImageIcon("src/main/java/com/mycompany/baitaplonmonhoc/img/" + iconOnPath);
         Image scaledImage = iconOn.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
@@ -318,50 +210,61 @@ public class RoomInterface extends JFrame {
         return button;
     }
 
-    private JPanel createPanelRight(int port, boolean isHost) {
-        JPanel panelRight = new JPanel(new BorderLayout());
-        String portString = String.valueOf(this.port);
+    private JPanel createPanelRight(int port, boolean isHost) throws IOException {
+    JPanel panelRight = new JPanel(new BorderLayout());
+    String portString = String.valueOf(port);
 
-        if (this.isHost) {
-            JLabel labelIDRoom = new JLabel("Room Port: " + portString);
-            panelRight.add(labelIDRoom, BorderLayout.NORTH);
-            // Your panelRight creation code here
-        } else {
-            webcam = Webcam.getDefault();
+    if (haveClients && isHost) {
+        JLabel labelIDRoom = new JLabel("Room Port: " + portString);
+        ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
+        JPanel videoDisplayPanel = new JPanel();
 
-            // Đảm bảo rằng webcam đã được đóng
-            if (webcam.isOpen()) {
-                webcam.close();
-                // Bây giờ bạn có thể thay đổi độ phân giải
-
-            }
-
-            webcam.setViewSize(new Dimension(640, 480));
-            // Sau đó, bạn có thể mở lại webcam
-            webcam.open();
-
-            isCameraOn = true;
-            isMicOn = true;
-
-            webcamPanelRight = new WebcamPanel(webcam);
-            webcamPanelRight.setMirrored(true);
-
-            Thread thread = new Thread(() -> {
-                webcam.open();
+        new Thread(() -> {
+            try {
                 while (true) {
-                    if (webcam.isOpen()) {
-                        webcamPanelRight.start();
-                    }
+                    BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
+                    // Assuming you have a method to update the video display
+                    updateVideoDisplay(videoDisplayPanel, receivedImage);
                 }
-            });
-            thread.setDaemon(true);
-            thread.start();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }).start();
 
-            panelRight.add(webcamPanelRight, BorderLayout.CENTER);
+        panelRight.add(videoDisplayPanel, BorderLayout.CENTER);
+        panelRight.add(labelIDRoom, BorderLayout.NORTH);
+
+        // Your panelRight creation code here
+    } else {
+        if (isHost) {
+            JLabel labelHostInfo = new JLabel("Host IP: " + this.IP_Server + " Port: " + this.port);
+            panelRight.add(labelHostInfo, BorderLayout.PAGE_START);
+        } else {
+            // Display client's webcam feed and host's info
+            ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
+            JPanel videoDisplayPanel = new JPanel();
+
+            new Thread(() -> {
+                try {
+                    while (true) {
+                        BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
+                        // Assuming you have a method to update the video display
+                        updateVideoDisplay(videoDisplayPanel, receivedImage);
+                    }
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+
+            JLabel labelHostInfo = new JLabel("Host IP: " + this.IP_Server + " Port: " + this.port);
+            panelRight.add(videoDisplayPanel, BorderLayout.CENTER);
+            panelRight.add(labelHostInfo, BorderLayout.SOUTH);
         }
-
-        return panelRight;
     }
+
+    return panelRight;
+}
+
 
     private void toggleMic(JButton buttonOnOffMic) {
         isMicOn = !isMicOn;
@@ -388,8 +291,7 @@ public class RoomInterface extends JFrame {
     }
 
     private void exitVideoRoom() {
-        dispose();
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        webcam.close();
         MainInterface main = new MainInterface();
         main.setVisible(true);
         setVisible(false);
@@ -402,5 +304,20 @@ public class RoomInterface extends JFrame {
 //            roomInterface.setVisible(true);
 //        });
 //    }
-   
+    private void updateVideoDisplay(JPanel videoDisplayPanel, BufferedImage image) {
+        SwingUtilities.invokeLater(() -> {
+            // Assuming you have a JLabel or other component to display images
+            JLabel imageLabel = new JLabel(new ImageIcon(image));
+
+            // Remove existing components from the panel
+            videoDisplayPanel.removeAll();
+
+            // Add the new image label to the panel
+            videoDisplayPanel.add(imageLabel);
+
+            // Repaint and revalidate the panel to reflect the changes
+            videoDisplayPanel.revalidate();
+            videoDisplayPanel.repaint();
+        });
+    }
 }

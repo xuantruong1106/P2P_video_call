@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -19,12 +20,22 @@ import javax.swing.JOptionPane;
 
 public class Create_Host_Video_Room extends JFrame {
     
-    String IP_Server = "192.168.0.146";
+   InetAddress ip;
+    String IP_Server = "";
     Scanner scanner = new Scanner(System.in);
 
     public Create_Host_Video_Room() {
         // Tạo một JFrame mới
-
+        
+        try {
+            
+            ip = InetAddress.getLocalHost();
+            IP_Server = ip.getHostAddress();
+            
+        } catch (Exception e) {
+            
+        }
+        
         setTitle("Create Room");
         setSize(300, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -76,7 +87,7 @@ public class Create_Host_Video_Room extends JFrame {
                 dos.writeUTF(name);
                 dos.writeInt(port);
 
-                RoomInterface ri = new RoomInterface(name, port, isHost);
+                RoomInterface ri = new RoomInterface(this.IP_Server, port, name, isHost);
 
                 ri.setLocationRelativeTo(null);
                 ri.setVisible(true);

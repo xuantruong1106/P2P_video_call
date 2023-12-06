@@ -5,8 +5,10 @@ import com.github.sarxos.webcam.WebcamResolution;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -44,8 +46,20 @@ public class RoomInterface extends JFrame {
                     ServerSocket ss = new ServerSocket(this.port);
                     new Thread(() -> {
                         try {
-                            ss.accept();
+
+                            Socket sk = ss.accept();
                             System.out.println("create server socket host done");
+                            ObjectInputStream inputStream = new ObjectInputStream(sk.getInputStream());
+
+                            // Modify your loop to receive and display frames
+                            while (true) {
+                                try {
+                                    BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
+                                    // Display receivedImage on the client's GUI
+                                } catch (ClassNotFoundException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -74,6 +88,9 @@ public class RoomInterface extends JFrame {
                 try {
                     Socket s = new Socket("192.168.0.146", this.port);
 
+                    ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
+
+                    // Modify your loop to receive and display frames
                     JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
 
                     JPanel panelLeft = createPanelLeft();
@@ -88,21 +105,17 @@ public class RoomInterface extends JFrame {
                     repaint();
 
                     setVisible(true);
+
+                    while (true) {
+
+                        BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
+                        // Display receivedImage on the client's GUI
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
-    }
-
-    private int AccessSocket(ServerSocket ss) throws Exception {
-
-        Socket socket = ss.accept();
-//            while (true) {
-//                
-//            }
-
-        return 0;
     }
 
     private JPanel createPanelLeft() {
@@ -113,11 +126,11 @@ public class RoomInterface extends JFrame {
 // Đảm bảo rằng webcam đã được đóng
         if (webcam.isOpen()) {
             webcam.close();
+            // Bây giờ bạn có thể thay đổi độ phân giải
+
         }
 
-// Bây giờ bạn có thể thay đổi độ phân giải
         webcam.setViewSize(new Dimension(640, 480));
-
 // Sau đó, bạn có thể mở lại webcam
         webcam.open();
 
@@ -183,10 +196,35 @@ public class RoomInterface extends JFrame {
             panelRight.add(labelIDRoom, BorderLayout.NORTH);
             // Your panelRight creation code here
         } else {
-            Webcam clientWebcam = Webcam.getDefault();
-            clientWebcam.setViewSize(WebcamResolution.VGA.getSize());
-            webcamPanelRight = new WebcamPanel(clientWebcam);
+            webcam = Webcam.getDefault();
+
+            // Đảm bảo rằng webcam đã được đóng
+            if (webcam.isOpen()) {
+                webcam.close();
+                // Bây giờ bạn có thể thay đổi độ phân giải
+
+            }
+
+            webcam.setViewSize(new Dimension(640, 480));
+            // Sau đó, bạn có thể mở lại webcam
+            webcam.open();
+
+            isCameraOn = true;
+            isMicOn = true;
+
+            webcamPanelRight = new WebcamPanel(webcam);
             webcamPanelRight.setMirrored(true);
+
+            Thread thread = new Thread(() -> {
+                webcam.open();
+                while (true) {
+                    if (webcam.isOpen()) {
+                        webcamPanelRight.start();
+                    }
+                }
+            });
+            thread.setDaemon(true);
+            thread.start();
 
             panelRight.add(webcamPanelRight, BorderLayout.CENTER);
         }

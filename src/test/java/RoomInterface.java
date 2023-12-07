@@ -28,9 +28,9 @@ public class RoomInterface extends JFrame {
     private static boolean isHost;
     private WebcamPanel webcamPanelRight;
     private Socket s;
-   private Socket sk = null;
+    private Socket sk;
+    
     private String IP_Server;
-    private ServerSocket ss;
    public RoomInterface(String IP_Server, int port, String name, boolean isHost) {
         this.name = name;
         this.port = port;
@@ -48,7 +48,7 @@ public class RoomInterface extends JFrame {
                 System.out.println("Room interface 45: host");
                 try {
 
-                    ss = new ServerSocket(this.port);
+                    ServerSocket ss = new ServerSocket(this.port);
                     new Thread(() -> {
                         try {
                             while (true) {
@@ -140,36 +140,36 @@ public class RoomInterface extends JFrame {
             ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
             JPanel videoDisplayPanel = new JPanel();
 
-            new Thread(() -> {
-                try {
-                    while (true) {
-                        BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
-                        updateVideoDisplay(videoDisplayPanel, receivedImage);
-                        panelLeft.add(videoDisplayPanel, BorderLayout.CENTER);
-                    }
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }).start();
+//            new Thread(() -> {
+//                try {
+//                    while (true) {
+//                        BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
+//                        updateVideoDisplay(videoDisplayPanel, receivedImage);
+//                        panelLeft.add(videoDisplayPanel, BorderLayout.CENTER);
+//                    }
+//                } catch (IOException | ClassNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+//            }).start();
 
             System.out.println("no host");
         } else {
             WebcamPanel webcamPanel = initializeWebcam();
             panelLeft.add(webcamPanel, BorderLayout.CENTER);
 
-            new Thread(() -> {
-                try {
-                    ObjectOutputStream outputStream = new ObjectOutputStream(sk.getOutputStream());
-
-                    while (true) {
-                        BufferedImage currentFrame = new BufferedImage(WIDTH, HEIGHT, HEIGHT);
-                        outputStream.writeObject(currentFrame);
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }).start();
+//            new Thread(() -> {
+//                try {
+//                    ObjectOutputStream outputStream = new ObjectOutputStream(sk.getOutputStream());
+//
+//                    while (true) {
+//                        BufferedImage currentFrame = new BufferedImage(WIDTH, HEIGHT, HEIGHT);
+//                        outputStream.writeObject(currentFrame);
+//                    }
+//
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }).start();
         } 
         JButton buttonOnOffMic = createButton("IconOnMic.png", "IconOffMic.png");
         JButton buttonOnOffVideo = createButton("IconOnVideo.png", "IconOffVideo.png");
@@ -207,19 +207,19 @@ public class RoomInterface extends JFrame {
         WebcamPanel webcamPanel = initializeWebcam();
         panelRight.add(webcamPanel, BorderLayout.NORTH);
         
-        new Thread(() -> {
-                try {
-                    ObjectOutputStream outputStream = new ObjectOutputStream(s.getOutputStream());
-
-                    while (true) {
-                        BufferedImage currentFrame = new BufferedImage(WIDTH, HEIGHT, HEIGHT);
-                        outputStream.writeObject(currentFrame);
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }).start();
+//        new Thread(() -> {
+//                try {
+//                    ObjectOutputStream outputStream = new ObjectOutputStream(s.getOutputStream());
+//
+//                    while (true) {
+//                        BufferedImage currentFrame = new BufferedImage(WIDTH, HEIGHT, HEIGHT);
+//                        outputStream.writeObject(currentFrame);
+//                    }
+//
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }).start();
     } else {
         System.out.println("193: isHost");
         JLabel labelHostInfo = new JLabel("Host IP: " + this.IP_Server + " Port: " + this.port);
@@ -228,17 +228,17 @@ public class RoomInterface extends JFrame {
         ObjectInputStream inputStream = new ObjectInputStream(sk.getInputStream());
         JPanel videoDisplayPanel = new JPanel();
 
-        new Thread(() -> {
-                try {
-                    while (true) {
-                        BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
-                        updateVideoDisplay(videoDisplayPanel, receivedImage);
-                        panelRight.add(videoDisplayPanel, BorderLayout.CENTER);
-                    }
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }).start();
+//        new Thread(() -> {
+//                try {
+//                    while (true) {
+//                        BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
+//                        updateVideoDisplay(videoDisplayPanel, receivedImage);
+//                        panelRight.add(videoDisplayPanel, BorderLayout.CENTER);
+//                    }
+//                } catch (IOException | ClassNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+//            }).start();
     }
 
     return panelRight;

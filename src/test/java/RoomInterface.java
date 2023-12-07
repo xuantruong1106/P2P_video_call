@@ -30,7 +30,7 @@ public class RoomInterface extends JFrame {
     private Socket s;
     private Socket sk;
     private String IP_Server;
-
+    private ServerSocket ss;
    public RoomInterface(String IP_Server, int port, String name, boolean isHost) {
         this.name = name;
         this.port = port;
@@ -48,7 +48,7 @@ public class RoomInterface extends JFrame {
                 System.out.println("Room interface 45: host");
                 try {
 
-                    ServerSocket ss = new ServerSocket(this.port);
+                    ss = new ServerSocket(this.port);
                     new Thread(() -> {
                         try {
                             while (true) {
@@ -87,8 +87,8 @@ public class RoomInterface extends JFrame {
 
                     JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
 
-                    JPanel panelLeft = createPanelLeft();
-                    JPanel panelRight = createPanelRight();
+                    JPanel panelLeft = createPanelLeft(sk);
+                    JPanel panelRight = createPanelRight(sk);
 
                     containerPanelLeftAndRight.removeAll();
                     containerPanelLeftAndRight.add(panelLeft);
@@ -111,8 +111,8 @@ public class RoomInterface extends JFrame {
                     // Modify your loop to receive and display frames
                     JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
 
-                    JPanel panelLeft = createPanelLeft();
-                    JPanel panelRight = createPanelRight();
+                    JPanel panelLeft = createPanelLeft(sk);
+                    JPanel panelRight = createPanelRight(sk);
 
                     containerPanelLeftAndRight.removeAll();
                     containerPanelLeftAndRight.add(panelLeft);
@@ -132,7 +132,7 @@ public class RoomInterface extends JFrame {
     }
 
 
-    private JPanel createPanelLeft() throws IOException {
+    private JPanel createPanelLeft(Socket sk) throws IOException {
         JPanel panelLeft = new JPanel(new BorderLayout());
 
         if (!this.isHost) {
@@ -199,7 +199,7 @@ public class RoomInterface extends JFrame {
         return  button;
     }
 
-    private JPanel createPanelRight() throws IOException {
+    private JPanel createPanelRight(Socket sk) throws IOException {
     JPanel panelRight = new JPanel(new BorderLayout());
 
     if (!this.isHost) {

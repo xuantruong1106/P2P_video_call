@@ -44,7 +44,8 @@ public class Enter_Name_Join__VIdeo_Room extends JFrame {
                 boolean isHost = false;
 //                     DataInputStream din = new DataInputStream(sk.getInputStream());
 //                     DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
-
+                
+                System.out.println("EnterName 48: "+ IP_Server + " " + port + " " + enterName + " " + isHost);
                 RoomInterface ri = new RoomInterface(IP_Server, port, enterName, isHost);
                 ri.setLocationRelativeTo(null);
                 ri.setVisible(true);

@@ -3,6 +3,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -34,14 +36,19 @@ public class MainInterface extends JFrame {
         JLabel labelEnterPort = new JLabel("Enter Port");
         JTextField textFieldEnterPort = new JTextField(10);
         
+        JLabel labelEnterName = new JLabel("Enter Name");
+        JTextField textFieldEnterName = new JTextField(10);
+        
         JPanel createRoomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         createRoomPanel.add(buttonCreateVideoRoom);
         
-        JPanel joinPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        JPanel joinPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 14, 14));
         joinPanel.add(labelEnterIP);
         joinPanel.add(textFieldEnterIP);
         joinPanel.add(labelEnterPort);
         joinPanel.add(textFieldEnterPort);
+        joinPanel.add(labelEnterName);
+        joinPanel.add(textFieldEnterName);
         joinPanel.add(buttonJoin);
         
        // Create the main panel with a GridLayout for organizing the subpanels
@@ -62,19 +69,28 @@ public class MainInterface extends JFrame {
         });
 
         buttonJoin.addActionListener(e -> {
-            System.out.println("Button Join clicked");
-            // Thêm mã xử lý cho sự kiện tương ứng với JavaFX
-
-            Enter_Name_Join__VIdeo_Room nj;
-            
             try {
+                
+                String IP = String.format(textFieldEnterIP.getText());
                 int port = Integer.parseInt(textFieldEnterPort.getText());
+                String enterName = String.format(textFieldEnterName.getText());
+
+                boolean isHost = false;
                 
-                Socket sk = new Socket(textFieldEnterIP.getText(), port);
+                System.out.println("Main interface  89: "+ IP + " " + port + " " + enterName + " " + isHost);
                 
-                nj = new Enter_Name_Join__VIdeo_Room(IP_Server, port);
-                nj.setVisible(true);
+                Socket sk = new Socket(IP, port);
+                
+                DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
+                dos.writeUTF(enterName);
+                
+                RoomInterface ri = new RoomInterface(IP, port, enterName, isHost);
+                ri.setLocationRelativeTo(null);
+                ri.setVisible(true);
+
                 dispose();
+                setVisible(false);
+                
             } catch (Exception ex) {
                 Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(this, "Không thể kết nối đến máy chủ.", "Lỗi Kết Nối", JOptionPane.ERROR_MESSAGE);

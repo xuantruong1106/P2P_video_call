@@ -34,7 +34,7 @@ public class RoomInterface extends JFrame {
         this.isHost = isHost;
         this.IP_Server = IP_Server;
 
-        System.out.println(this.name + this.port + this.isHost);
+        System.out.println("Roominterface 37: " + this.name + " "+this.port + " "+this.isHost);
 
         SwingUtilities.invokeLater(() -> {
             setSize(800, 400);
@@ -42,14 +42,16 @@ public class RoomInterface extends JFrame {
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
             if (isHost) {
-                System.out.println("host");
+                System.out.println("Room interface 45: host");
                 try {
 
                     ServerSocket ss = new ServerSocket(this.port);
                     new Thread(() -> {
                         try {
-                            ss.accept();
-                            System.out.println("create server socket host done");
+                           Socket sk = ss.accept();
+                            System.out.println("Room interface 52: create server socket host done");
+                            DataInputStream din = new DataInputStream(sk.getInputStream());
+                            System.out.println("Room interface 54 || Client video room join: " + din.readUTF());
                             haveClients = true;
 
                         } catch (Exception e) {
@@ -76,7 +78,7 @@ public class RoomInterface extends JFrame {
                 }
 
             } else {
-                System.out.println("client");
+                System.out.println("Room interface 79: client");
                 try {
                     s = new Socket(IP_Server, this.port);
 

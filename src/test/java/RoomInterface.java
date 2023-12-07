@@ -28,6 +28,7 @@ public class RoomInterface extends JFrame {
     private static boolean isHost;
     private WebcamPanel webcamPanelRight;
     private Socket s;
+    private Socket sk;
     private String IP_Server;
 
    public RoomInterface(String IP_Server, int port, String name, boolean isHost) {
@@ -51,7 +52,7 @@ public class RoomInterface extends JFrame {
                     new Thread(() -> {
                         try {
                             while (true) {
-                                Socket sk = ss.accept();
+                                sk = ss.accept();
                                 System.out.println("Room interface 52: create server socket host done");
 
                                 // Handle client connection
@@ -65,7 +66,6 @@ public class RoomInterface extends JFrame {
                             System.out.println("Client disconnected");
                             // Set haveClients to false when there are no connected clients
                             while (true) {
-                                Socket sk;
                                 try {
                                     sk = ss.accept();
                                     // Handle client connection
@@ -159,7 +159,7 @@ public class RoomInterface extends JFrame {
 
             new Thread(() -> {
                 try {
-                    ObjectOutputStream outputStream = new ObjectOutputStream(s.getOutputStream());
+                    ObjectOutputStream outputStream = new ObjectOutputStream(sk.getOutputStream());
 
                     while (true) {
                         BufferedImage currentFrame = new BufferedImage(WIDTH, HEIGHT, HEIGHT);
@@ -225,7 +225,7 @@ public class RoomInterface extends JFrame {
         JLabel labelHostInfo = new JLabel("Host IP: " + this.IP_Server + " Port: " + this.port);
         panelRight.add(labelHostInfo, BorderLayout.PAGE_START);
         
-        ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
+        ObjectInputStream inputStream = new ObjectInputStream(sk.getInputStream());
         JPanel videoDisplayPanel = new JPanel();
 
         new Thread(() -> {

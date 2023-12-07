@@ -28,7 +28,7 @@ public class RoomInterface extends JFrame {
     private static boolean isHost;
     private WebcamPanel webcamPanelRight;
     private Socket s;
-    private Socket sk;
+   private Socket sk = null;
     private String IP_Server;
     private ServerSocket ss;
    public RoomInterface(String IP_Server, int port, String name, boolean isHost) {

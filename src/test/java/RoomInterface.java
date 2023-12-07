@@ -15,6 +15,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RoomInterface extends JFrame {
 
@@ -63,7 +65,22 @@ public class RoomInterface extends JFrame {
                         } catch (SocketException se) {
                             // Handle client disconnection
                             System.out.println("Client disconnected");
-                            haveClients = false; // Set haveClients to false when there are no connected clients
+                            // Set haveClients to false when there are no connected clients
+                            while (true) {
+                                Socket sk;
+                                try {
+                                    sk = ss.accept();
+                                    // Handle client connection
+                                    DataInputStream din1 = new DataInputStream(sk.getInputStream());
+                                    System.out.println("Room interface 54 || Client video room join: " + din1.readUTF());
+                                    haveClients = false;
+
+                                } catch (IOException ex) {
+                                    Logger.getLogger(RoomInterface.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+
+                                // Continue listening for more clients
+                            }
                         } catch (IOException e) {
                             // Handle other exceptions, e.g., if the server socket is closed
                             e.printStackTrace();
@@ -91,7 +108,7 @@ public class RoomInterface extends JFrame {
                 }
 
             } else {
-                System.out.println("Room interface 79: client");
+                System.out.println("Room interface 94: client");
                 try {
                     s = new Socket(IP_Server, this.port);
 
@@ -251,8 +268,9 @@ public class RoomInterface extends JFrame {
             JLabel labelHostInfo = new JLabel("Host IP: " + this.IP_Server + "|| Port: " + this.port);
             panelRight.add(videoDisplayPanel, BorderLayout.CENTER);
             panelRight.add(labelHostInfo, BorderLayout.SOUTH);
+        } else {
+            System.out.println("RoomInterface.createPanelRight()");
         }
-
         return panelRight;
     }
 

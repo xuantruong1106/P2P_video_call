@@ -137,19 +137,21 @@ public class RoomInterface extends JFrame {
 
         if (!this.isHost) {
             // If there are clients and this is not the host
-            ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
-            JPanel videoDisplayPanel = new JPanel();
+//            ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
+//            JPanel videoDisplayPanel = new JPanel();
+//
+//            new Thread(() -> {
+//                try {
+//                    while (true) {
+//                        BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
+//                        updateVideoDisplay(videoDisplayPanel, receivedImage);
+//                    }
+//                } catch (IOException | ClassNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+//            }).start();
 
-            new Thread(() -> {
-                try {
-                    while (true) {
-                        BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
-                        updateVideoDisplay(videoDisplayPanel, receivedImage);
-                    }
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }).start();
+            System.out.println("no host");
         } else {
             WebcamPanel webcamPanel = initializeWebcam();
             panelLeft.add(webcamPanel, BorderLayout.CENTER);
@@ -197,21 +199,21 @@ public class RoomInterface extends JFrame {
     }
 
     private JPanel createPanelRight() throws IOException {
-        JPanel panelRight = new JPanel(new BorderLayout());
-  
-        if (this.isHost) {
-            System.out.println("193: !haveClients && isHost");
-            JLabel labelHostInfo = new JLabel("Host IP: " + this.IP_Server + " Port: " + this.port);
-            panelRight.add(labelHostInfo, BorderLayout.PAGE_START);
-        }
-        else {
-            System.out.println("220: haveClients && !isHost");
-            WebcamPanel webcamPanel = initializeWebcam();
-            panelRight.add(webcamPanel, BorderLayout.NORTH);
-        }
-        
-        return panelRight;
+    JPanel panelRight = new JPanel(new BorderLayout());
+
+    if (!this.isHost) {
+        System.out.println("220: !isHost");
+        WebcamPanel webcamPanel = initializeWebcam();
+        panelRight.add(webcamPanel, BorderLayout.NORTH);
+    } else {
+        System.out.println("193: isHost");
+        JLabel labelHostInfo = new JLabel("Host IP: " + this.IP_Server + " Port: " + this.port);
+        panelRight.add(labelHostInfo, BorderLayout.PAGE_START);
     }
+
+    return panelRight;
+}
+
 
     private WebcamPanel initializeWebcam() {
         webcam = Webcam.getDefault();

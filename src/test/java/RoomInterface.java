@@ -31,7 +31,7 @@ public class RoomInterface extends JFrame {
     private boolean haveClients = false;
     private String IP_Server;
 
-    public RoomInterface(String IP_Server, int port, String name, boolean isHost) {
+   public RoomInterface(String IP_Server, int port, String name, boolean isHost) {
         this.name = name;
         this.port = port;
         this.isHost = isHost;
@@ -134,6 +134,7 @@ public class RoomInterface extends JFrame {
             }
         });
     }
+
 
     private JPanel createPanelLeft(boolean isHost) throws IOException {
         JPanel panelLeft = new JPanel(new BorderLayout());

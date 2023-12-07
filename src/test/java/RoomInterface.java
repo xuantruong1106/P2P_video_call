@@ -145,7 +145,7 @@ public class RoomInterface extends JFrame {
                 e.printStackTrace();
             }
         }).start();
-    } else {
+    } else if(!haveClients && isHost){
         // If there are no clients
         WebcamPanel webcamPanel = initializeWebcam();
         panelLeft.add(webcamPanel, BorderLayout.CENTER);
@@ -219,7 +219,14 @@ public class RoomInterface extends JFrame {
     JPanel panelRight = new JPanel(new BorderLayout());
     String portString = String.valueOf(port);
 
-    if (haveClients && isHost) {
+    if (!haveClients && isHost) {
+        
+        JLabel labelHostInfo = new JLabel("Host IP: " + this.IP_Server + " Port: " + this.port);
+        panelRight.add(labelHostInfo, BorderLayout.PAGE_START);
+        
+        // Your panelRight creation code here
+    } else if(haveClients && isHost){
+        
         JLabel labelIDRoom = new JLabel("Room Port: " + portString);
         ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
         JPanel videoDisplayPanel = new JPanel();
@@ -238,33 +245,28 @@ public class RoomInterface extends JFrame {
 
         panelRight.add(videoDisplayPanel, BorderLayout.CENTER);
         panelRight.add(labelIDRoom, BorderLayout.NORTH);
+        
+    } else if(haveClients && !isHost){
+        // Display client's webcam feed and host's info
+        ObjectOutputStream outputStream = new ObjectOutputStream(s.getOutputStream());
+        JPanel videoDisplayPanel = new JPanel();
 
-        // Your panelRight creation code here
-    } else {
-        if (isHost) {
-            JLabel labelHostInfo = new JLabel("Host IP: " + this.IP_Server + " Port: " + this.port);
-            panelRight.add(labelHostInfo, BorderLayout.PAGE_START);
-        } else {
-            // Display client's webcam feed and host's info
-            ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
-            JPanel videoDisplayPanel = new JPanel();
-
-            new Thread(() -> {
-                try {
-                    while (true) {
-                        BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
-                        // Assuming you have a method to update the video display
-                        updateVideoDisplay(videoDisplayPanel, receivedImage);
-                    }
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
+        new Thread(() -> {
+            try {
+                while (true) {
+                    BufferedImage sendImage = new BufferedImage(WIDTH, HEIGHT, HEIGHT);
+                     outputStream.writeObject(sendImage);
+                    // AssBufferedImage receivedImage = new BufferedImageBufferedImage;uming you have a method to update the video display
+                    updateVideoDisplay(videoDisplayPanel, sendImage);
                 }
-            }).start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
 
-            JLabel labelHostInfo = new JLabel("Host IP: " + this.IP_Server + " Port: " + this.port);
-            panelRight.add(videoDisplayPanel, BorderLayout.CENTER);
-            panelRight.add(labelHostInfo, BorderLayout.SOUTH);
-        }
+        JLabel labelHostInfo = new JLabel("Host IP: " + this.IP_Server + "|| Port: " + this.port);
+        panelRight.add(videoDisplayPanel, BorderLayout.CENTER);
+        panelRight.add(labelHostInfo, BorderLayout.SOUTH);
     }
 
     return panelRight;
@@ -310,19 +312,12 @@ public class RoomInterface extends JFrame {
 //        });
 //    }
     private void updateVideoDisplay(JPanel videoDisplayPanel, BufferedImage image) {
-        SwingUtilities.invokeLater(() -> {
-            // Assuming you have a JLabel or other component to display images
-            JLabel imageLabel = new JLabel(new ImageIcon(image));
-
-            // Remove existing components from the panel
-            videoDisplayPanel.removeAll();
-
-            // Add the new image label to the panel
-            videoDisplayPanel.add(imageLabel);
-
-            // Repaint and revalidate the panel to reflect the changes
-            videoDisplayPanel.revalidate();
-            videoDisplayPanel.repaint();
-        });
-    }
+    SwingUtilities.invokeLater(() -> {
+        JLabel imageLabel = new JLabel(new ImageIcon(image));
+        videoDisplayPanel.removeAll();
+        videoDisplayPanel.add(imageLabel);
+        videoDisplayPanel.revalidate();
+        videoDisplayPanel.repaint();
+    });
+}
 }

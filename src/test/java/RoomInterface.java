@@ -87,8 +87,8 @@ public class RoomInterface extends JFrame {
 
                     JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
 
-                    JPanel panelLeft = createPanelLeft(this.isHost);
-                    JPanel panelRight = createPanelRight(this.port, this.isHost);
+                    JPanel panelLeft = createPanelLeft();
+                    JPanel panelRight = createPanelRight();
 
                     containerPanelLeftAndRight.removeAll();
                     containerPanelLeftAndRight.add(panelLeft);
@@ -111,8 +111,8 @@ public class RoomInterface extends JFrame {
                     // Modify your loop to receive and display frames
                     JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
 
-                    JPanel panelLeft = createPanelLeft(this.isHost);
-                    JPanel panelRight = createPanelRight(this.port, this.isHost);
+                    JPanel panelLeft = createPanelLeft();
+                    JPanel panelRight = createPanelRight();
 
                     containerPanelLeftAndRight.removeAll();
                     containerPanelLeftAndRight.add(panelLeft);
@@ -132,7 +132,7 @@ public class RoomInterface extends JFrame {
     }
 
 
-    private JPanel createPanelLeft(boolean isHost) throws IOException {
+    private JPanel createPanelLeft() throws IOException {
         JPanel panelLeft = new JPanel(new BorderLayout());
 
         if (!this.isHost) {
@@ -196,10 +196,9 @@ public class RoomInterface extends JFrame {
         return  button;
     }
 
-    private JPanel createPanelRight(int port, boolean isHost) throws IOException {
+    private JPanel createPanelRight() throws IOException {
         JPanel panelRight = new JPanel(new BorderLayout());
-        String portString = String.valueOf(port);
-
+  
         if (this.isHost) {
             System.out.println("193: !haveClients && isHost");
             JLabel labelHostInfo = new JLabel("Host IP: " + this.IP_Server + " Port: " + this.port);
@@ -208,13 +207,9 @@ public class RoomInterface extends JFrame {
         else {
             System.out.println("220: haveClients && !isHost");
             WebcamPanel webcamPanel = initializeWebcam();
-            panelRight.add(webcamPanel, BorderLayout.CENTER);
+            panelRight.add(webcamPanel, BorderLayout.NORTH);
         }
         
-            JLabel labelHostInfo = new JLabel("Host IP: " + this.IP_Server + "|| Port: " + this.port);
-//            panelRight.add(videoDisplayPanel, BorderLayout.CENTER);
-            panelRight.add(labelHostInfo, BorderLayout.SOUTH);
-
         return panelRight;
     }
 

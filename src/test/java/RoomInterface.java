@@ -137,8 +137,8 @@ public class RoomInterface extends JFrame {
 
         if (!this.isHost) {
             // If there are clients and this is not the host
-            ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
-            JPanel videoDisplayPanel = new JPanel();
+//            ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
+//            JPanel videoDisplayPanel = new JPanel();
 
 //            new Thread(() -> {
 //                try {
@@ -225,8 +225,8 @@ public class RoomInterface extends JFrame {
         JLabel labelHostInfo = new JLabel("Host IP: " + this.IP_Server + " Port: " + this.port);
         panelRight.add(labelHostInfo, BorderLayout.PAGE_START);
         
-        ObjectInputStream inputStream = new ObjectInputStream(sk.getInputStream());
-        JPanel videoDisplayPanel = new JPanel();
+//        ObjectInputStream inputStream = new ObjectInputStream(sk.getInputStream());
+//        JPanel videoDisplayPanel = new JPanel();
 
 //        new Thread(() -> {
 //                try {

@@ -75,7 +75,7 @@ public class Create_Host_Video_Room extends JFrame {
             String name = textFieldEnterName.getText();
             int port = Integer.parseInt(textFieldEnterPort.getText());
             boolean isHost = true;
-            System.out.println("Create_Host_Video_Room 78" +this.IP_Server + " " + port + " " + name + " " + isHost);
+            System.out.println("Create_Host_Video_Room 78 " +this.IP_Server + " " + port + " " + name + " " + isHost);
             Socket sk1;
             try {
                 sk1 = new Socket(IP_Server, 1106);

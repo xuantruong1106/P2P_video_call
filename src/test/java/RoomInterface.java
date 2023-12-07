@@ -48,11 +48,14 @@ public class RoomInterface extends JFrame {
                     ServerSocket ss = new ServerSocket(this.port);
                     new Thread(() -> {
                         try {
-                           Socket sk = ss.accept();
-                            System.out.println("Room interface 52: create server socket host done");
-                            DataInputStream din = new DataInputStream(sk.getInputStream());
-                            System.out.println("Room interface 54 || Client video room join: " + din.readUTF());
-                            haveClients = true;
+                            while(true){
+                                Socket sk = ss.accept();
+                                System.out.println("Room interface 52: create server socket host done");
+                                DataInputStream din = new DataInputStream(sk.getInputStream());
+                                System.out.println("Room interface 54 || Client video room join: " + din.readUTF());
+                                haveClients = true;
+                            }
+                           
 
                         } catch (Exception e) {
                             e.printStackTrace();

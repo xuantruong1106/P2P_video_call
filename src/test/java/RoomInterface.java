@@ -56,7 +56,7 @@ public class RoomInterface extends JFrame {
 
                                 // Handle client connection
                                 DataInputStream din = new DataInputStream(sk.getInputStream());
-                                System.out.println("Room interface 54 || Client video room join: " + din.readUTF());
+                                System.out.println("Room interface 59 || Client video room join: " + din.readUTF());
                                 
                                 // Continue listening for more clients
                             }
@@ -137,19 +137,20 @@ public class RoomInterface extends JFrame {
 
         if (!this.isHost) {
             // If there are clients and this is not the host
-//            ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
-//            JPanel videoDisplayPanel = new JPanel();
-//
-//            new Thread(() -> {
-//                try {
-//                    while (true) {
-//                        BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
-//                        updateVideoDisplay(videoDisplayPanel, receivedImage);
-//                    }
-//                } catch (IOException | ClassNotFoundException e) {
-//                    e.printStackTrace();
-//                }
-//            }).start();
+            ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
+            JPanel videoDisplayPanel = new JPanel();
+
+            new Thread(() -> {
+                try {
+                    while (true) {
+                        BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
+                        updateVideoDisplay(videoDisplayPanel, receivedImage);
+                        panelLeft.add(videoDisplayPanel, BorderLayout.CENTER);
+                    }
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }).start();
 
             System.out.println("no host");
         } else {
@@ -205,10 +206,39 @@ public class RoomInterface extends JFrame {
         System.out.println("220: !isHost");
         WebcamPanel webcamPanel = initializeWebcam();
         panelRight.add(webcamPanel, BorderLayout.NORTH);
+        
+        new Thread(() -> {
+                try {
+                    ObjectOutputStream outputStream = new ObjectOutputStream(s.getOutputStream());
+
+                    while (true) {
+                        BufferedImage currentFrame = new BufferedImage(WIDTH, HEIGHT, HEIGHT);
+                        outputStream.writeObject(currentFrame);
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
     } else {
         System.out.println("193: isHost");
         JLabel labelHostInfo = new JLabel("Host IP: " + this.IP_Server + " Port: " + this.port);
         panelRight.add(labelHostInfo, BorderLayout.PAGE_START);
+        
+        ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
+        JPanel videoDisplayPanel = new JPanel();
+
+        new Thread(() -> {
+                try {
+                    while (true) {
+                        BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
+                        updateVideoDisplay(videoDisplayPanel, receivedImage);
+                        panelRight.add(videoDisplayPanel, BorderLayout.CENTER);
+                    }
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }).start();
     }
 
     return panelRight;

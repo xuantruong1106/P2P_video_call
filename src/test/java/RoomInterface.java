@@ -105,7 +105,7 @@ public class RoomInterface extends JFrame {
             } else {
                 System.out.println("Room interface 111: client");
                 try {
-                    s = new Socket(IP_Server, this.port);
+                    sk = new Socket(this.IP_Server, this.port);
 
                     // Modify your loop to receive and display frames
                     JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));

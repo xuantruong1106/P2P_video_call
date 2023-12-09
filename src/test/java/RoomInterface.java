@@ -58,8 +58,8 @@ public class RoomInterface extends JFrame {
                     System.out.println("Client connected: " + this.skHost);
                     
                     // Handle client connection
-                    DataInputStream din = new DataInputStream(this.skHost.getInputStream());
-                    System.out.println("Client video room join: " + din.readUTF());
+//                    DataInputStream din = new DataInputStream(this.skHost.getInputStream());
+//                    System.out.println("Client video room join: " + din.readUTF());
 
                     // Continue listening for more clients or perform other actions
                 }
@@ -153,6 +153,17 @@ public class RoomInterface extends JFrame {
                 }).start();
             } else {
                 System.out.println("skHost null in createPanelLeft");
+                
+                new Thread(() -> {
+                    try {
+                        while (true) {
+                            this.skHost = ss.accept();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
+                
             }
         }
 
@@ -213,7 +224,7 @@ public class RoomInterface extends JFrame {
             if (this.skHost != null) {
                 new Thread(() -> {
                     try {
-                        ObjectInputStream inputStream = new ObjectInputStream(this.skHost.getInputStream());
+                        ObjectInputStream inputStream = new ObjectInputStream(skHost.getInputStream());
                         while (true) {
                             byte[] imageData = (byte[]) inputStream.readObject();
 
@@ -307,4 +318,8 @@ public class RoomInterface extends JFrame {
 
         return button;
     }
+     
+//     public static void main(String[] args) {
+//        new RoomInterface("localhost", 1235, "d", true);
+//    }
 }

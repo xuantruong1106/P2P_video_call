@@ -79,10 +79,10 @@ public class MainInterface extends JFrame {
                 
                 System.out.println("Main interface  89: "+ IP + " " + port + " " + enterName + " " + isHost);
                 
-                Socket sk = new Socket(IP, port);
-                
-                DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
-                dos.writeUTF(enterName);
+//                Socket sk = new Socket(IP, port);
+//                
+//                DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
+//                dos.writeUTF(enterName);
                 
                 RoomInterface ri = new RoomInterface(IP, port, enterName, isHost);
                 ri.setLocationRelativeTo(null);

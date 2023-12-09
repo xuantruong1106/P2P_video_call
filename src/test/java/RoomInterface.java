@@ -133,42 +133,49 @@ public class RoomInterface extends JFrame {
 
     private JPanel createPanelLeft(Socket sk) throws IOException {
         JPanel panelLeft = new JPanel(new BorderLayout());
-
+        JLabel videoLabel = null ;
+        
         if (!this.isHost) {
-            // If there are clients and this is not the host
-//            ObjectInputStream inputStream = new ObjectInputStream(s.getInputStream());
-//            JPanel videoDisplayPanel = new JPanel();
+            ObjectInputStream inputStream = new ObjectInputStream(sk.getInputStream());
 
-//            new Thread(() -> {
-//                try {
-//                    while (true) {
-//                        BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
-//                        updateVideoDisplay(videoDisplayPanel, receivedImage);
-//                        panelLeft.add(videoDisplayPanel, BorderLayout.CENTER);
-//                    }
-//                } catch (IOException | ClassNotFoundException e) {
-//                    e.printStackTrace();
-//                }
-//            }).start();
+            new Thread(() -> {
+                try {
+                    while (true) {
+                       byte[] imageData = (byte[]) inputStream.readObject();
 
-            System.out.println("no host");
+                    // Hiển thị hình ảnh trên JLabel
+                    ImageIcon imageIcon = new ImageIcon(imageData);
+                    videoLabel.setIcon(imageIcon);
+                    panelLeft.add(videoLabel, BorderLayout.CENTER);
+                    }
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                    System.out.println("153");
+                }
+            }).start();
+
+            System.out.println("no host 158");
         } else {
             WebcamPanel webcamPanel = initializeWebcam();
             panelLeft.add(webcamPanel, BorderLayout.CENTER);
 
-//            new Thread(() -> {
-//                try {
-//                    ObjectOutputStream outputStream = new ObjectOutputStream(sk.getOutputStream());
-//
-//                    while (true) {
-//                        BufferedImage currentFrame = new BufferedImage(WIDTH, HEIGHT, HEIGHT);
-//                        outputStream.writeObject(currentFrame);
-//                    }
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }).start();
+            new Thread(() -> {
+                try {
+                    ObjectOutputStream outputStream = new ObjectOutputStream(sk.getOutputStream());
+                    ImageIcon ic;
+                    BufferedImage br;
+                    
+                    while (true) {
+                        br = initializeWebcam().getImage();
+                        ic = new ImageIcon(br);
+                        outputStream.writeObject(ic);
+                        outputStream.flush();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
         } 
         JButton buttonOnOffMic = createButton("IconOnMic.png", "IconOffMic.png");
         JButton buttonOnOffVideo = createButton("IconOnVideo.png", "IconOffVideo.png");
@@ -204,40 +211,47 @@ public class RoomInterface extends JFrame {
     if (!this.isHost) {
         System.out.println("220: !isHost");
         WebcamPanel webcamPanel = initializeWebcam();
-        panelRight.add(webcamPanel, BorderLayout.NORTH);
+        panelRight.add(webcamPanel, BorderLayout.CENTER);
         
-//        new Thread(() -> {
-//                try {
-//                    ObjectOutputStream outputStream = new ObjectOutputStream(s.getOutputStream());
-//
-//                    while (true) {
-//                        BufferedImage currentFrame = new BufferedImage(WIDTH, HEIGHT, HEIGHT);
-//                        outputStream.writeObject(currentFrame);
-//                    }
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }).start();
-    } else {
-        System.out.println("193: isHost");
-        JLabel labelHostInfo = new JLabel("Host IP: " + this.IP_Server + " Port: " + this.port);
-        panelRight.add(labelHostInfo, BorderLayout.PAGE_START);
-        
-//        ObjectInputStream inputStream = new ObjectInputStream(sk.getInputStream());
-//        JPanel videoDisplayPanel = new JPanel();
+         new Thread(() -> {
+                try {
+                    ObjectOutputStream outputStream = new ObjectOutputStream(sk.getOutputStream());
+                    ImageIcon ic;
+                    BufferedImage br;
+                    
+                    while (true) {
+                        br = initializeWebcam().getImage();
+                        ic = new ImageIcon(br);
+                        outputStream.writeObject(ic);
+                        outputStream.flush();
+                    }
 
-//        new Thread(() -> {
-//                try {
-//                    while (true) {
-//                        BufferedImage receivedImage = (BufferedImage) inputStream.readObject();
-//                        updateVideoDisplay(videoDisplayPanel, receivedImage);
-//                        panelRight.add(videoDisplayPanel, BorderLayout.CENTER);
-//                    }
-//                } catch (IOException | ClassNotFoundException e) {
-//                    e.printStackTrace();
-//                }
-//            }).start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+    } else {
+                System.out.println("193: isHost");
+                JLabel labelHostInfo = new JLabel("Host IP: " + this.IP_Server + " Port: " + this.port);
+                panelRight.add(labelHostInfo, BorderLayout.PAGE_START);
+                JLabel videoLabel = null ;
+                
+                ObjectInputStream inputStream = new ObjectInputStream(sk.getInputStream());
+                new Thread(() -> {
+                try {
+                    while (true) {
+                       byte[] imageData = (byte[]) inputStream.readObject();
+
+                    // Hiển thị hình ảnh trên JLabel
+                    ImageIcon imageIcon = new ImageIcon(imageData);
+                    videoLabel.setIcon(imageIcon);
+                    panelRight.add(videoLabel, BorderLayout.CENTER);
+                    }
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                    System.out.println("153");
+                }
+            }).start();
     }
 
     return panelRight;
@@ -314,5 +328,9 @@ public class RoomInterface extends JFrame {
             videoDisplayPanel.revalidate();
             videoDisplayPanel.repaint();
         });
+    }
+
+    private void img_server(ImageIcon ic) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

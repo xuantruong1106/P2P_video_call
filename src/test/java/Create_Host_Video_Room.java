@@ -1,4 +1,3 @@
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -12,6 +11,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -78,7 +78,7 @@ public class Create_Host_Video_Room extends JFrame {
             System.out.println("Create_Host_Video_Room 78 " +this.IP_Server + " " + port + " " + name + " " + isHost);
             Socket sk1;
             try {
-                sk1 = new Socket(IP_Server, 1106);
+                sk1 = new Socket("localhost", 1106);
                 
                 
                 DataInputStream din = new DataInputStream(sk1.getInputStream());
@@ -86,8 +86,7 @@ public class Create_Host_Video_Room extends JFrame {
 
                 dos.writeUTF(name);
                 dos.writeInt(port);
-                
-               
+                             
                 RoomInterface ri = new RoomInterface(this.IP_Server, port, name, isHost);
 
                 ri.setLocationRelativeTo(null);

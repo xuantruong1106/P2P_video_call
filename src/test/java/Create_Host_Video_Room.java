@@ -81,12 +81,12 @@ public class Create_Host_Video_Room extends JFrame {
                 sk1 = new Socket("localhost", 1106);
                 
                 
-                DataInputStream din = new DataInputStream(sk1.getInputStream());
-                DataOutputStream dos = new DataOutputStream(sk1.getOutputStream());
-                
-                System.out.println(din.readUTF());
-                dos.writeUTF(name);
-                dos.writeInt(port);
+//                DataInputStream din = new DataInputStream(sk1.getInputStream());
+//                DataOutputStream dos = new DataOutputStream(sk1.getOutputStream());
+//                
+//                System.out.println(din.readUTF());
+//                dos.writeUTF(name);
+//                dos.writeInt(port);
                              
                 RoomInterface ri = new RoomInterface(this.IP_Server, port, name, isHost);
 

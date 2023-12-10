@@ -24,7 +24,7 @@ public class RoomInterface extends JFrame {
     private static String IP_Server_Global;
     private static int portGlobal;
 
-    public RoomInterface(String IP_Server, int port, String name, boolean isHost) {
+  public RoomInterface(String IP_Server, int port, String name, boolean isHost) {
 
         this.IP_Server_Global = IP_Server;
         this.isHostGlobal = isHost;
@@ -37,18 +37,18 @@ public class RoomInterface extends JFrame {
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
             if (isHost) {
-                try {
-                    ServerSocket ss = new ServerSocket(port);
-                    System.out.println("ss done");
-                    while (true) {
+                // Run the server initialization in a separate thread
+                new Thread(() -> {
+                    try {
+                        ServerSocket ss = new ServerSocket(port);
+                        System.out.println("ss done");
                         Socket skHost = ss.accept();
-                        if (skHost != null) {
-                            handle(skHost);
-                        }
+                        System.out.println(skHost);
+                        handle(skHost);
+                    } catch (IOException ex) {
+                        Logger.getLogger(RoomInterface.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } catch (IOException ex) {
-                    Logger.getLogger(RoomInterface.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                }).start();
             } else {
                 try {
                     Socket skClient = new Socket(IP_Server, port);
@@ -60,7 +60,9 @@ public class RoomInterface extends JFrame {
         });
     }
 
-    private void handle(Socket sk) {
+   private void handle(Socket sk) {
+       System.out.println(sk);
+    SwingUtilities.invokeLater(() -> {
         JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
 
         JPanel panelCenter = createPaneCenter(sk);
@@ -69,8 +71,9 @@ public class RoomInterface extends JFrame {
 
         getContentPane().add(containerPanelLeftAndRight);
         setVisible(true);
+    });
+}
 
-    }
 
     private JPanel createPaneCenter(Socket sk) {
 
@@ -136,9 +139,15 @@ public class RoomInterface extends JFrame {
 
                 dos.writeUTF("host");
                 dos.flush();
-
-                video.setText(dis.readUTF());
-                panelCenter.add(video, BorderLayout.EAST);
+                
+                if(dis != null)
+                {
+                    video.setText(dis.readUTF());
+                    panelCenter.add(video, BorderLayout.EAST);
+                }else{
+                    System.out.println("null");
+                }
+                
 
             } catch (IOException e) {
                 e.printStackTrace();

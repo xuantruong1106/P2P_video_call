@@ -123,13 +123,13 @@ public class RoomInterface extends JFrame {
             ImageIcon webcamIcon;
 
             while (true) {
-                receivedIcon = (ImageIcon) in.readObject();
-                video.setIcon(receivedIcon);
-                panelCenter.add(video, BorderLayout.EAST);
-
                 webcamIcon = new ImageIcon(webcamPanel.getImage());
                 out.writeObject(webcamIcon);
                 out.flush();
+
+                receivedIcon = (ImageIcon) in.readObject();
+                video.setIcon(receivedIcon);
+                panelCenter.add(video, BorderLayout.EAST);
             }
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error in host handling: " + e.getMessage());
@@ -142,13 +142,13 @@ public class RoomInterface extends JFrame {
             ImageIcon receivedIcon;
 
             while (true) {
-                webcamIcon = new ImageIcon(webcamPanel.getImage());
-                out.writeObject(webcamIcon);
-                out.flush();
-
                 receivedIcon = (ImageIcon) in.readObject();
                 video.setIcon(receivedIcon);
                 panelCenter.add(video, BorderLayout.EAST);
+
+                webcamIcon = new ImageIcon(webcamPanel.getImage());
+                out.writeObject(webcamIcon);
+                out.flush();
             }
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error in client handling: " + e.getMessage());

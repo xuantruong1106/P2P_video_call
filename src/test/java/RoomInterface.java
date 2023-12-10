@@ -99,35 +99,45 @@ public class RoomInterface extends JFrame {
 
         panelCenter.add(webcamPanel, BorderLayout.CENTER);
         panelCenter.add(buttonPanel, BorderLayout.SOUTH);
-
+        
         try {
-            while (true) {
-                BufferedImage image = webcam.getImage();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write(image, "jpg", baos);
-                byte[] bytes = baos.toByteArray();
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            
+             if(isHostGlobal){
+                 ImageIcon ic;
+                 BufferedImage br;
+                 
+                 while (true) {                     
+                     ic = (ImageIcon) in.readObject();
+                     video.setIcon(ic);
+                     
+                     br = webcamPanel.getImage();
+                     ic = new ImageIcon(br);
+                     out.writeObject(ic);
+                     out.flush();
+                 }
+            }else{
+                 ImageIcon ic;
+                 BufferedImage br;
+                 
+                 while (true) {                     
+                     br = webcamPanel.getImage();
+                     ic = new ImageIcon(br);
+                     out.writeObject(ic);
+                     out.flush();
+                     
+                     ic = (ImageIcon) in.readObject();
+                     video.setIcon(ic);
+                 }
 
-                DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-                dos.writeInt(bytes.length);
-                dos.write(bytes);
-
-                DataInputStream dis = new DataInputStream(socket.getInputStream());
-                int length = dis.readInt();
-                bytes = new byte[length];
-
-                if (length > 0) {
-                    dis.readFully(bytes, 0, bytes.length);
-                }
-
-                BufferedImage receivedImage = ImageIO.read(new ByteArrayInputStream(bytes));
-                ImageIcon imageIcon = new ImageIcon(receivedImage);
-                video.setIcon(imageIcon);
-                panelCenter.add(video, BorderLayout.EAST);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Error in createPaneCenter");
+        } catch (Exception e) {
+            System.out.println("in out have problem");
         }
+        
+        
+       
 
         return panelCenter;
     }

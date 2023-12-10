@@ -61,7 +61,8 @@ public class RoomInterface extends JFrame {
     }
 
     private void handleHost(Socket sk) {
-
+        
+        System.out.println("RoomInterface.handleHost()");
         JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
 
         JPanel panelLeft = createPanelLeft(sk);
@@ -103,12 +104,7 @@ public class RoomInterface extends JFrame {
         
         if (!isHostGlobal) {
             
-            buttonOnOffVideo.addActionListener(e -> toggleVideo(buttonOnOffVideo));
-            
-            buttonPanel.add(buttonOnOffVideo);
-            
-            panelLeft.add(buttonPanel, BorderLayout.SOUTH);
-            
+             System.out.println("!isHost in createPanelLeft");         
             
             if (sk != null) {
                 new Thread(() -> {
@@ -136,6 +132,7 @@ public class RoomInterface extends JFrame {
                 System.out.println("sk null in createPanelLeft");
             }
         } else {
+            
             System.out.println("RoomInterface.createPanelLeft()");
             WebcamPanel webcamPanel = initializeWebcam();           
             

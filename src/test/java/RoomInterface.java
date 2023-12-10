@@ -1,3 +1,4 @@
+
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
 
@@ -99,51 +100,59 @@ public class RoomInterface extends JFrame {
 
         panelCenter.add(webcamPanel, BorderLayout.CENTER);
         panelCenter.add(buttonPanel, BorderLayout.SOUTH);
-        
+
         try {
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            
-             if(isHostGlobal){
-                 ImageIcon ic;
-                 ImageIcon ic2;
-                 BufferedImage br;
-                 
-                 while (true) {                     
-                     ic = (ImageIcon) in.readObject();
-                     video.setIcon(ic);
-                      panelCenter.add(video, BorderLayout.EAST);
-                     
-                     br = webcamPanel.getImage();
-                     ic2 = new ImageIcon(br);
-                     out.writeObject(ic);
-                     out.flush();
-                 }
-            }else{
-                 ImageIcon ic;
-                  ImageIcon ic2;
-                 BufferedImage br;
-                 
-                 while (true) {                     
-                     br = webcamPanel.getImage();
-                     ic = new ImageIcon(br);
-                     out.writeObject(ic);
-                     out.flush();
-                     
-                     ic2 = (ImageIcon) in.readObject();
-                     video.setIcon(ic2);
-                      panelCenter.add(video, BorderLayout.EAST);
-                 }
 
+            if (isHostGlobal) {
+                handleHost(in, out, video, webcamPanel, panelCenter);
+            } else {
+                handleClient(in, out, video, webcamPanel, panelCenter);
             }
         } catch (Exception e) {
             System.out.println("in out have problem");
         }
-        
-        
-       
 
         return panelCenter;
+    }
+
+    private void handleHost(ObjectInputStream in, ObjectOutputStream out, JLabel video, WebcamPanel webcamPanel, JPanel panelCenter) {
+        try {
+            ImageIcon receivedIcon;
+            ImageIcon webcamIcon;
+
+            while (true) {
+                receivedIcon = (ImageIcon) in.readObject();
+                video.setIcon(receivedIcon);
+                panelCenter.add(video, BorderLayout.EAST);
+
+                webcamIcon = new ImageIcon(webcamPanel.getImage());
+                out.writeObject(webcamIcon);
+                out.flush();
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error in host handling: " + e.getMessage());
+        }
+    }
+
+    private void handleClient(ObjectInputStream in, ObjectOutputStream out, JLabel video, WebcamPanel webcamPanel, JPanel panelCenter) {
+        try {
+            ImageIcon webcamIcon;
+            ImageIcon receivedIcon;
+
+            while (true) {
+                webcamIcon = new ImageIcon(webcamPanel.getImage());
+                out.writeObject(webcamIcon);
+                out.flush();
+
+                receivedIcon = (ImageIcon) in.readObject();
+                video.setIcon(receivedIcon);
+                panelCenter.add(video, BorderLayout.EAST);
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error in client handling: " + e.getMessage());
+        }
     }
 
     private WebcamPanel initializeWebcam() {

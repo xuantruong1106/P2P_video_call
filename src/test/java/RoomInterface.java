@@ -106,19 +106,22 @@ public class RoomInterface extends JFrame {
             
              if(isHostGlobal){
                  ImageIcon ic;
+                 ImageIcon ic2;
                  BufferedImage br;
                  
                  while (true) {                     
                      ic = (ImageIcon) in.readObject();
                      video.setIcon(ic);
+                      panelCenter.add(video, BorderLayout.EAST);
                      
                      br = webcamPanel.getImage();
-                     ic = new ImageIcon(br);
+                     ic2 = new ImageIcon(br);
                      out.writeObject(ic);
                      out.flush();
                  }
             }else{
                  ImageIcon ic;
+                  ImageIcon ic2;
                  BufferedImage br;
                  
                  while (true) {                     
@@ -127,8 +130,9 @@ public class RoomInterface extends JFrame {
                      out.writeObject(ic);
                      out.flush();
                      
-                     ic = (ImageIcon) in.readObject();
-                     video.setIcon(ic);
+                     ic2 = (ImageIcon) in.readObject();
+                     video.setIcon(ic2);
+                      panelCenter.add(video, BorderLayout.EAST);
                  }
 
             }

@@ -205,29 +205,29 @@ public class RoomInterface extends JFrame {
             panelRight.add(webcamPanel, BorderLayout.CENTER);
             panelRight.add(buttonPanel, BorderLayout.SOUTH);
             
-            if (sk != null) {
-                new Thread(() -> {
-                    try {
-//                        ObjectOutputStream outputStream = new ObjectOutputStream(sk.getOutputStream());
-//                        ImageIcon ic;
-//                        BufferedImage br;
-                        DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
-//                        while (true) {
-//                            br = initializeWebcam().getImage();
-//                            ic = new ImageIcon(br);
-//                            outputStream.writeObject(ic);
-//                            outputStream.flush();
-                        dos.writeUTF("220");
-//                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        System.out.println("Error in createPanelRight");
-                    }
-                }).start();
-            } else {
-                System.out.println("sk null in createPanelRight");
-            }
+//            if (sk != null) {
+//                new Thread(() -> {
+//                    try {
+////                        ObjectOutputStream outputStream = new ObjectOutputStream(sk.getOutputStream());
+////                        ImageIcon ic;
+////                        BufferedImage br;
+//                        DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
+////                        while (true) {
+////                            br = initializeWebcam().getImage();
+////                            ic = new ImageIcon(br);
+////                            outputStream.writeObject(ic);
+////                            outputStream.flush();
+//                        dos.writeUTF("220");
+////                        }
+//
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                        System.out.println("Error in createPanelRight");
+//                    }
+//                }).start();
+//            } else {
+//                System.out.println("sk null in createPanelRight");
+//            }
         } else {
             System.out.println("RoomInterface.createPanelRight()");
  

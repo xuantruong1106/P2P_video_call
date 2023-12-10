@@ -155,7 +155,7 @@ public class RoomInterface extends JFrame {
             panelLeft.add(webcamPanel, BorderLayout.CENTER);
             panelLeft.add(buttonPanel, BorderLayout.SOUTH);
             
-            if (sk != null) {
+//            if (sk != null) {
 //                new Thread(() -> {
                     try {
 //                        ObjectOutputStream outputStream = new ObjectOutputStream(skHost.getOutputStream());
@@ -178,10 +178,11 @@ public class RoomInterface extends JFrame {
                         System.out.println("Error in createPanelLeft");
                     }
 //                }).start();
-            } else {
-                System.out.println("skHost null in createPanelLeft");
-            }
+//            } else {
+//                System.out.println("skHost null in createPanelLeft");
+//            }
         }
+        
         return panelLeft;
     }
 
@@ -235,29 +236,32 @@ public class RoomInterface extends JFrame {
             System.out.println("isHost in createPanelRight");
             JLabel labelHostInfo = new JLabel("Host IP: " + IP_Server_Global + " Port: " + portGlobal);
             panelRight.add(labelHostInfo, BorderLayout.PAGE_START);
-           
+            videoLabel.setText("don't client");
+            panelRight.add(videoLabel, BorderLayout.CENTER);
 
-            if (sk != null) {
-//                new Thread(() -> {
-                    try {
-                        DataInputStream dis = new DataInputStream(sk.getInputStream());
-                        while(true){
-                            String message = dis.readUTF();
-                            System.out.println(message);
-                            videoLabel.setText(message);
-                            panelRight.add(videoLabel, BorderLayout.CENTER);
-                        } 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        System.out.println("Error in createPanelRight");
-                    }
-//                }).start();
-                
-                
-            } else {
-                System.out.println("skHost null in createPanelRight");
-            }
+//            if (sk != null) {
+////                new Thread(() -> {
+//                    try {
+//                        DataInputStream dis = new DataInputStream(sk.getInputStream());
+////                        videoLabel.setText("don't client");
+////                        panelRight.add(videoLabel, BorderLayout.CENTER);
+//                        while(true){
+//                            String message = dis.readUTF();
+//                            System.out.println(message);
+//                            videoLabel.setText(message);
+//                            panelRight.add(videoLabel, BorderLayout.CENTER);
+//                        } 
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                        System.out.println("Error in createPanelRight");
+//                    }
+////                }).start();
+//                    
+//            } else {
+//                System.out.println("skHost null in createPanelRight");
+//            }
         }
+        
         
         return panelRight;
     }

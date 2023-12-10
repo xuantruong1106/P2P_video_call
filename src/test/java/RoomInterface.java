@@ -43,16 +43,17 @@ public class RoomInterface extends JFrame {
                     System.out.println("ss done");
                     while(true){
                          Socket skHost = ss.accept();
-                        handleHost(skHost);
+                         handleHost(skHost);
                     }
-                   
                 } catch (IOException ex) {
                     Logger.getLogger(RoomInterface.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
                 try {
-                    Socket skClient = new Socket(IP_Server, port);
-                    handleClient(skClient);
+                    while(true){
+                        Socket skClient = new Socket(IP_Server, port);
+                        handleClient(skClient);
+                    }
                 } catch (IOException ex) {
                     Logger.getLogger(RoomInterface.class.getName()).log(Level.SEVERE, null, ex);
                 }

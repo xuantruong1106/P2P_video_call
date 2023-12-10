@@ -102,7 +102,7 @@ public class RoomInterface extends JFrame {
     private JPanel createPanelLeft(Socket sk) {
 
         JPanel panelLeft = new JPanel(new BorderLayout());
-        JLabel videoLabel = new JLabel();
+       
         
         JButton buttonOnOffMic = createButton("IconOnMic.png", "IconOffMic.png");
         JButton buttonOnOffVideo = createButton("IconOnVideo.png", "IconOffVideo.png");
@@ -111,7 +111,7 @@ public class RoomInterface extends JFrame {
         JPanel buttonPanel = new JPanel();
         
         if (!isHostGlobal) {
-            
+             JLabel videoLabel = new JLabel();
              System.out.println("!isHost in createPanelLeft");         
             
             if (sk != null) {
@@ -162,7 +162,7 @@ public class RoomInterface extends JFrame {
 //                        ImageIcon ic;
 //                        BufferedImage br;
                         DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
-                        dos.writeUTF(" 148");
+                        dos.writeUTF("host");
                         dos.flush();
 
 //                        while (true) {
@@ -185,23 +185,52 @@ public class RoomInterface extends JFrame {
         
         return panelLeft;
     }
-
+ 
     private JPanel createPanelRight(Socket sk) {
 
         JPanel panelRight = new JPanel(new BorderLayout());
-        JLabel videoLabel = new JLabel();
-        JPanel buttonPanel = new JPanel();
+       
         
         JButton buttonOnOffMic = createButton("IconOnMic.png", "IconOffMic.png");
         JButton buttonOnOffVideo = createButton("IconOnVideo.png", "IconOffVideo.png");
         JButton buttonExitVideoRoom = createButton("IconExit.png", null);
+
+        JPanel buttonPanel = new JPanel();
         
-        
-        if (!isHostGlobal) {
-            System.out.println("!isHost in createPanelRight");
-            WebcamPanel webcamPanel = initializeWebcam();
+        if (isHostGlobal) {
+             JLabel videoLabel = new JLabel();
+             System.out.println("!isHost in createPanelLeft");         
             
-             
+            if (sk != null) {
+//                new Thread(() -> {
+                    try {
+//                        ObjectInputStream inputStream = new ObjectInputStream(sk.getInputStream());
+                        DataInputStream inputStream = new DataInputStream(sk.getInputStream());
+//                        while (true) {
+//                            byte[] imageData = (byte[]) inputStream.readObject();
+
+                        // Display image on JLabel
+//                            ImageIcon imageIcon = new ImageIcon(imageData);
+//                            videoLabel.setIcon(imageIcon);
+//                            panelLeft.revalidate();
+//                            panelLeft.repaint();
+//                            System.out.println("data 127" + inputStream.readUTF());
+                        videoLabel.setText(inputStream.readUTF());
+                        panelRight.add(videoLabel, BorderLayout.CENTER);
+//                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        System.out.println("Error in createPanelLeft");
+                    }
+//                }).start();
+            } else {
+                System.out.println("sk null in createPanelLeft");
+            }
+        } else {
+            
+            System.out.println("RoomInterface.createPanelLeft()");
+            WebcamPanel webcamPanel = initializeWebcam();           
+            
             buttonOnOffMic.addActionListener(e -> toggleMic(buttonOnOffMic));
             buttonOnOffVideo.addActionListener(e -> toggleVideo(buttonOnOffVideo));
             buttonExitVideoRoom.addActionListener(e -> exitVideoRoom());
@@ -210,61 +239,119 @@ public class RoomInterface extends JFrame {
             buttonPanel.add(buttonOnOffVideo);
             buttonPanel.add(buttonExitVideoRoom);
             
-            
             panelRight.add(webcamPanel, BorderLayout.CENTER);
             panelRight.add(buttonPanel, BorderLayout.SOUTH);
             
-            if (sk != null) {
+//            if (sk != null) {
 //                new Thread(() -> {
                     try {
+//                        ObjectOutputStream outputStream = new ObjectOutputStream(skHost.getOutputStream());
+//                        ImageIcon ic;
+//                        BufferedImage br;
                         DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
-                        dos.writeUTF("220");
+                        dos.writeUTF("client");
                         dos.flush();
+
+//                        while (true) {
+//                            br = initializeWebcam().getImage();
+//                            ic = new ImageIcon(br);
+//                            outputStream.writeObject(ic);
+//                            outputStream.flush();
+
 //                        }
 
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                         e.printStackTrace();
-                        System.out.println("Error in createPanelRight");
+                        System.out.println("Error in createPanelLeft");
                     }
 //                }).start();
-            } else {
-                System.out.println("sk null in createPanelRight");
-            }
-        } else {
-            System.out.println("RoomInterface.createPanelRight()");
- 
-            System.out.println("isHost in createPanelRight");
-            JLabel labelHostInfo = new JLabel("Host IP: " + IP_Server_Global + " Port: " + portGlobal);
-            panelRight.add(labelHostInfo, BorderLayout.PAGE_START);
-            videoLabel.setText("don't client");
-            panelRight.add(videoLabel, BorderLayout.CENTER);
+//            } else {
+//                System.out.println("skHost null in createPanelLeft");
+//            }
+        }
+        
+        return panelRight;
+    }
 
+//    private JPanel createPanelRight(Socket sk) {
+//
+//        JPanel panelRight = new JPanel(new BorderLayout());
+//        JLabel videoLabel = new JLabel();
+//        JPanel buttonPanel = new JPanel();
+//        
+//        JButton buttonOnOffMic = createButton("IconOnMic.png", "IconOffMic.png");
+//        JButton buttonOnOffVideo = createButton("IconOnVideo.png", "IconOffVideo.png");
+//        JButton buttonExitVideoRoom = createButton("IconExit.png", null);
+//        
+//        
+//        if (!isHostGlobal) {
+//            System.out.println("!isHost in createPanelRight");
+//            WebcamPanel webcamPanel = initializeWebcam();
+//            
+//             
+//            buttonOnOffMic.addActionListener(e -> toggleMic(buttonOnOffMic));
+//            buttonOnOffVideo.addActionListener(e -> toggleVideo(buttonOnOffVideo));
+//            buttonExitVideoRoom.addActionListener(e -> exitVideoRoom());
+//            
+//            buttonPanel.add(buttonOnOffMic);
+//            buttonPanel.add(buttonOnOffVideo);
+//            buttonPanel.add(buttonExitVideoRoom);
+//            
+//            
+//            panelRight.add(webcamPanel, BorderLayout.CENTER);
+//            panelRight.add(buttonPanel, BorderLayout.SOUTH);
+//            
 //            if (sk != null) {
 ////                new Thread(() -> {
 //                    try {
-//                        DataInputStream dis = new DataInputStream(sk.getInputStream());
-////                        videoLabel.setText("don't client");
-////                        panelRight.add(videoLabel, BorderLayout.CENTER);
-//                        while(true){
-//                            String message = dis.readUTF();
-//                            System.out.println(message);
-//                            videoLabel.setText(message);
-//                            panelRight.add(videoLabel, BorderLayout.CENTER);
-//                        } 
+//                        DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
+//                        dos.writeUTF("220");
+//                        dos.flush();
+////                        }
+//
 //                    } catch (Exception e) {
 //                        e.printStackTrace();
 //                        System.out.println("Error in createPanelRight");
 //                    }
 ////                }).start();
-//                    
 //            } else {
-//                System.out.println("skHost null in createPanelRight");
+//                System.out.println("sk null in createPanelRight");
 //            }
-        }
-        
-        
-        return panelRight;
-    }
+//        } else {
+//            System.out.println("RoomInterface.createPanelRight()");
+// 
+//            System.out.println("isHost in createPanelRight");
+//            JLabel labelHostInfo = new JLabel("Host IP: " + IP_Server_Global + " Port: " + portGlobal);
+//            panelRight.add(labelHostInfo, BorderLayout.PAGE_START);
+//            videoLabel.setText("don't client");
+//            panelRight.add(videoLabel, BorderLayout.CENTER);
+//
+////            if (sk != null) {
+//////                new Thread(() -> {
+////                    try {
+////                        DataInputStream dis = new DataInputStream(sk.getInputStream());
+//////                        videoLabel.setText("don't client");
+//////                        panelRight.add(videoLabel, BorderLayout.CENTER);
+////                        while(true){
+////                            String message = dis.readUTF();
+////                            System.out.println(message);
+////                            videoLabel.setText(message);
+////                            panelRight.add(videoLabel, BorderLayout.CENTER);
+////                        } 
+////                    } catch (Exception e) {
+////                        e.printStackTrace();
+////                        System.out.println("Error in createPanelRight");
+////                    }
+//////                }).start();
+////                    
+////            } else {
+////                System.out.println("skHost null in createPanelRight");
+////            }
+//        }
+//        
+//        
+//        return panelRight;
+//    }
     
     private WebcamPanel initializeWebcam() {
         webcam = Webcam.getDefault();

@@ -88,6 +88,7 @@ public class RoomInterface extends JFrame {
         JPanel buttonPanel = new JPanel();
 
         WebcamPanel webcamPanel = initializeWebcam();
+        
         JLabel video = new JLabel();
 
         buttonOnOffMic.addActionListener(e -> toggleMic(buttonOnOffMic));
@@ -98,59 +99,57 @@ public class RoomInterface extends JFrame {
         buttonPanel.add(buttonOnOffVideo);
         buttonPanel.add(buttonExitVideoRoom);
 
-        panelCenter.add(webcamPanel, BorderLayout.CENTER);
+        
         panelCenter.add(buttonPanel, BorderLayout.SOUTH);
+        
 
         try {
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 
             if (isHostGlobal) {
-                handleHost(in, out, video, webcamPanel, panelCenter);
+                try {
+                    ImageIcon ic;
+                    BufferedImage br;
+                    while (true) {
+                        ic = (ImageIcon) in.readObject();
+                        video.setIcon(ic);
+                    }
+                } catch (IOException e) {
+                    System.err.println("Network error in host handling: " + e.getMessage());
+                    // Handle network error...
+                } catch (ClassNotFoundException e) {
+                    System.err.println("Class not found error in host handling: " + e.getMessage());
+                    // Handle class not found error...
+                }
             } else {
-                handleClient(in, out, video, webcamPanel, panelCenter);
+                 
+                 panelCenter.add(webcamPanel, BorderLayout.CENTER);
+                 
+                  try {
+
+                        ImageIcon ic;
+                        BufferedImage br;
+                        while (true) {
+                            br = webcamPanel.getImage();
+                            ic = new ImageIcon(br);
+                            out.writeObject(ic);
+                            out.flush();
+                        }
+                    } catch (IOException e) {
+                        System.err.println("Network error in client handling: " + e.getMessage());
+                        // Handle network error...
+                    }
             }
         } catch (Exception e) {
             System.out.println("in out have problem");
         }
-
+        
+        panelCenter.add(video, BorderLayout.EAST);
         return panelCenter;
     }
 
-    private void handleHost(ObjectInputStream in, ObjectOutputStream out, JLabel video, WebcamPanel webcamPanel, JPanel panelCenter) {
-        try {
-            ImageIcon ic;
-            BufferedImage br;
-            panelCenter.add(video, BorderLayout.EAST);
-            while (true) {
-                ic = (ImageIcon) in.readObject();
-                video.setIcon(ic);
-            }
-        } catch (IOException e) {
-            System.err.println("Network error in host handling: " + e.getMessage());
-            // Handle network error...
-        } catch (ClassNotFoundException e) {
-            System.err.println("Class not found error in host handling: " + e.getMessage());
-            // Handle class not found error...
-        }
-    }
-
-    private void handleClient(ObjectInputStream in, ObjectOutputStream out, JLabel video, WebcamPanel webcamPanel, JPanel panelCenter) {
-        try {
-
-            ImageIcon ic;
-            BufferedImage br;
-            while (true) {
-                br = webcamPanel.getImage();
-                ic = new ImageIcon(br);
-                out.writeObject(ic);
-                out.flush();
-            }
-        } catch (IOException e) {
-            System.err.println("Network error in client handling: " + e.getMessage());
-            // Handle network error...
-        }
-    }
+   
 
     private WebcamPanel initializeWebcam() {
         webcam = Webcam.getDefault();

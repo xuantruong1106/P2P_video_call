@@ -45,11 +45,11 @@ public class RoomInterface extends JFrame {
                     try {
                         ServerSocket ss = new ServerSocket(port);
                         System.out.println("ss done");
-                        while(true){
+//                        while(true){
                              Socket skHost = ss.accept();
                             System.out.println(skHost);
                             handle(skHost);
-                        }
+//                        }
                        
                     } catch (IOException ex) {
                         Logger.getLogger(RoomInterface.class.getName()).log(Level.SEVERE, null, ex);
@@ -108,14 +108,45 @@ public class RoomInterface extends JFrame {
             panelCenter.add(buttonPanel, BorderLayout.SOUTH);
 
             try {
-                DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
-                DataInputStream dis = new DataInputStream(sk.getInputStream());
+//                DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
+//                DataInputStream dis = new DataInputStream(sk.getInputStream());
+//
+//                video.setText(dis.readUTF());
+//                panelCenter.add(video, BorderLayout.EAST);
+//
+//                dos.writeUTF("Client");
+//                dos.flush();
 
-                video.setText(dis.readUTF());
-                panelCenter.add(video, BorderLayout.EAST);
+                while (true) {
+                    DataInputStream dis = new DataInputStream(sk.getInputStream());
 
-                dos.writeUTF("Client");
-                dos.flush();
+                    int length = dis.readInt(); // read length of incoming message
+                    bytes = new byte[length];
+
+                    if (length > 0) {
+                        dis.readFully(bytes, 0, bytes.length); // read the message
+                    }
+                    BufferedImage receivedImage = ImageIO.read(new ByteArrayInputStream(bytes));
+
+                    ImageIcon imageIcon = new ImageIcon(receivedImage);
+
+                    video.setIcon(imageIcon);
+                    panelCenter.add(video, BorderLayout.EAST);
+                    
+                    BufferedImage image = webcam.getImage();
+                     
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    
+                    ImageIO.write(image, "jpg", baos);
+                    byte[] bytes = baos.toByteArray();
+
+                    DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
+                    dos.writeInt(bytes.length);
+                    dos.write(bytes);
+                    
+                    
+                    
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -174,7 +205,14 @@ public class RoomInterface extends JFrame {
                         dis.readFully(bytes, 0, bytes.length); // read the message
                     }
                     BufferedImage receivedImage = ImageIO.read(new ByteArrayInputStream(bytes));
-                    // Process the received image...
+
+                    // Convert the receivedImage to ImageIcon
+                    ImageIcon imageIcon = new ImageIcon(receivedImage);
+
+                    // Set the ImageIcon as icon of the JLabel
+                    video.setIcon(imageIcon);
+                    panelCenter.add(video, BorderLayout.EAST);
+                    
                 }
               
                 

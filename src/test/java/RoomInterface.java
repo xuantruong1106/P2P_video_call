@@ -108,30 +108,30 @@ public class RoomInterface extends JFrame {
             panelLeft.add(buttonPanel, BorderLayout.SOUTH);
             
             
-//            if (sk != null) {
-//                new Thread(() -> {
-//                    try {
-////                        ObjectInputStream inputStream = new ObjectInputStream(sk.getInputStream());
-//                        DataInputStream inputStream = new DataInputStream(sk.getInputStream());
-////                        while (true) {
-////                            byte[] imageData = (byte[]) inputStream.readObject();
-//
-//                        // Display image on JLabel
-////                            ImageIcon imageIcon = new ImageIcon(imageData);
-////                            videoLabel.setIcon(imageIcon);
-////                            panelLeft.revalidate();
-////                            panelLeft.repaint();
-////                            System.out.println("data 127" + inputStream.readUTF());
-//                        videoLabel.setText(inputStream.readUTF());
-////                        }
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                        System.out.println("Error in createPanelLeft");
-//                    }
-//                }).start();
-//            } else {
-//                System.out.println("sk null in createPanelLeft");
-//            }
+            if (sk != null) {
+                new Thread(() -> {
+                    try {
+//                        ObjectInputStream inputStream = new ObjectInputStream(sk.getInputStream());
+                        DataInputStream inputStream = new DataInputStream(sk.getInputStream());
+//                        while (true) {
+//                            byte[] imageData = (byte[]) inputStream.readObject();
+
+                        // Display image on JLabel
+//                            ImageIcon imageIcon = new ImageIcon(imageData);
+//                            videoLabel.setIcon(imageIcon);
+//                            panelLeft.revalidate();
+//                            panelLeft.repaint();
+//                            System.out.println("data 127" + inputStream.readUTF());
+                        videoLabel.setText(inputStream.readUTF());
+//                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        System.out.println("Error in createPanelLeft");
+                    }
+                }).start();
+            } else {
+                System.out.println("sk null in createPanelLeft");
+            }
         } else {
             System.out.println("RoomInterface.createPanelLeft()");
             WebcamPanel webcamPanel = initializeWebcam();           
@@ -147,31 +147,31 @@ public class RoomInterface extends JFrame {
             panelLeft.add(webcamPanel, BorderLayout.CENTER);
             panelLeft.add(buttonPanel, BorderLayout.SOUTH);
             
-//            if (sk != null) {
-//                new Thread(() -> {
-//                    try {
-////                        ObjectOutputStream outputStream = new ObjectOutputStream(skHost.getOutputStream());
-////                        ImageIcon ic;
-////                        BufferedImage br;
-//                        DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
-//                        dos.writeUTF(" 148");
-//
-////                        while (true) {
-////                            br = initializeWebcam().getImage();
-////                            ic = new ImageIcon(br);
-////                            outputStream.writeObject(ic);
-////                            outputStream.flush();
-//
-////                        }
-//
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                        System.out.println("Error in createPanelLeft");
-//                    }
-//                }).start();
-//            } else {
-//                System.out.println("skHost null in createPanelLeft");
-//            }
+            if (sk != null) {
+                new Thread(() -> {
+                    try {
+//                        ObjectOutputStream outputStream = new ObjectOutputStream(skHost.getOutputStream());
+//                        ImageIcon ic;
+//                        BufferedImage br;
+                        DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
+                        dos.writeUTF(" 148");
+
+//                        while (true) {
+//                            br = initializeWebcam().getImage();
+//                            ic = new ImageIcon(br);
+//                            outputStream.writeObject(ic);
+//                            outputStream.flush();
+
+//                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        System.out.println("Error in createPanelLeft");
+                    }
+                }).start();
+            } else {
+                System.out.println("skHost null in createPanelLeft");
+            }
         }
         return panelLeft;
     }
@@ -201,29 +201,29 @@ public class RoomInterface extends JFrame {
             panelRight.add(webcamPanel, BorderLayout.CENTER);
             panelRight.add(buttonPanel, BorderLayout.SOUTH);
             
-//            if (sk != null) {
-//                new Thread(() -> {
-//                    try {
-////                        ObjectOutputStream outputStream = new ObjectOutputStream(sk.getOutputStream());
-////                        ImageIcon ic;
-////                        BufferedImage br;
-//                        DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
-////                        while (true) {
-////                            br = initializeWebcam().getImage();
-////                            ic = new ImageIcon(br);
-////                            outputStream.writeObject(ic);
-////                            outputStream.flush();
-//                        dos.writeUTF("220");
-////                        }
-//
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                        System.out.println("Error in createPanelRight");
-//                    }
-//                }).start();
-//            } else {
-//                System.out.println("sk null in createPanelRight");
-//            }
+            if (sk != null) {
+                new Thread(() -> {
+                    try {
+//                        ObjectOutputStream outputStream = new ObjectOutputStream(sk.getOutputStream());
+//                        ImageIcon ic;
+//                        BufferedImage br;
+                        DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
+//                        while (true) {
+//                            br = initializeWebcam().getImage();
+//                            ic = new ImageIcon(br);
+//                            outputStream.writeObject(ic);
+//                            outputStream.flush();
+                        dos.writeUTF("220");
+//                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        System.out.println("Error in createPanelRight");
+                    }
+                }).start();
+            } else {
+                System.out.println("sk null in createPanelRight");
+            }
         } else {
             System.out.println("RoomInterface.createPanelRight()");
             buttonOnOffVideo.addActionListener(e -> toggleVideo(buttonOnOffVideo));
@@ -240,30 +240,30 @@ public class RoomInterface extends JFrame {
             panelRight.add(labelHostInfo, BorderLayout.PAGE_START);
             JLabel videoLabel = new JLabel();
 
-//            if (sk != null) {
-//                new Thread(() -> {
-//                    try {
-////                        ObjectInputStream inputStream = new ObjectInputStream(skHost.getInputStream());
-////                        while (true) {
-////                            byte[] imageData = (byte[]) inputStream.readObject();
-////
-////                            // Display image on JLabel
-////                            ImageIcon imageIcon = new ImageIcon(imageData);
-////                            videoLabel.setIcon(imageIcon);
-////                            panelRight.revalidate();
-////                            panelRight.repaint();
-////                        }
+            if (sk != null) {
+                new Thread(() -> {
+                    try {
+//                        ObjectInputStream inputStream = new ObjectInputStream(skHost.getInputStream());
+//                        while (true) {
+//                            byte[] imageData = (byte[]) inputStream.readObject();
 //
-//                        DataInputStream dis = new DataInputStream(sk.getInputStream());
-//                        videoLabel.setText(dis.readUTF());
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                        System.out.println("Error in createPanelRight");
-//                    }
-//                }).start();
-//            } else {
-//                System.out.println("skHost null in createPanelRight");
-//            }
+//                            // Display image on JLabel
+//                            ImageIcon imageIcon = new ImageIcon(imageData);
+//                            videoLabel.setIcon(imageIcon);
+//                            panelRight.revalidate();
+//                            panelRight.repaint();
+//                        }
+
+                        DataInputStream dis = new DataInputStream(sk.getInputStream());
+                        videoLabel.setText(dis.readUTF());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        System.out.println("Error in createPanelRight");
+                    }
+                }).start();
+            } else {
+                System.out.println("skHost null in createPanelRight");
+            }
         }
 
         return panelRight;

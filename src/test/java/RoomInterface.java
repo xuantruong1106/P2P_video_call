@@ -117,74 +117,40 @@ public class RoomInterface extends JFrame {
         return panelCenter;
     }
 
-private void handleHost(ObjectInputStream in, ObjectOutputStream out, JLabel video, WebcamPanel webcamPanel, JPanel panelCenter) {
-    try {
-        final ImageIcon receivedIcon = (ImageIcon) in.readObject();
-        final ImageIcon webcamIcon = new ImageIcon(webcamPanel.getImage());
-
-        while (true) {
-           
-
-            SwingUtilities.invokeLater(() -> {
-                video.setIcon(webcamIcon);
-                panelCenter.revalidate();
-                panelCenter.repaint();
-            });
-
-            out.writeObject(webcamIcon);
-            out.flush();
-
-            
-
-            SwingUtilities.invokeLater(() -> {
-                video.setIcon(receivedIcon);
-                panelCenter.revalidate();
-                panelCenter.repaint();
-            });
+    private void handleHost(ObjectInputStream in, ObjectOutputStream out, JLabel video, WebcamPanel webcamPanel, JPanel panelCenter) {
+        try {
+            ImageIcon ic;
+            BufferedImage br;
+            panelCenter.add(video, BorderLayout.EAST);
+            while (true) {
+                ic = (ImageIcon) in.readObject();
+                video.setIcon(ic);
+            }
+        } catch (IOException e) {
+            System.err.println("Network error in host handling: " + e.getMessage());
+            // Handle network error...
+        } catch (ClassNotFoundException e) {
+            System.err.println("Class not found error in host handling: " + e.getMessage());
+            // Handle class not found error...
         }
-    } catch (IOException e) {
-        System.err.println("Network error in host handling: " + e.getMessage());
-        // Handle network error...
-    } catch (ClassNotFoundException e) {
-        System.err.println("Class not found error in host handling: " + e.getMessage());
-        // Handle class not found error...
     }
-}
 
-private void handleClient(ObjectInputStream in, ObjectOutputStream out, JLabel video, WebcamPanel webcamPanel, JPanel panelCenter) {
-    try {
-        final ImageIcon receivedIcon = (ImageIcon) in.readObject();
-        final ImageIcon webcamIcon = new ImageIcon(webcamPanel.getImage());
+    private void handleClient(ObjectInputStream in, ObjectOutputStream out, JLabel video, WebcamPanel webcamPanel, JPanel panelCenter) {
+        try {
 
-        while (true) {
-            
-
-            SwingUtilities.invokeLater(() -> {
-                video.setIcon(receivedIcon);
-                panelCenter.revalidate();
-                panelCenter.repaint();
-            });
-
-            
-            out.writeObject(webcamIcon);
-            out.flush();
-
-            SwingUtilities.invokeLater(() -> {
-                video.setIcon(webcamIcon);
-                panelCenter.revalidate();
-                panelCenter.repaint();
-            });
+            ImageIcon ic;
+            BufferedImage br;
+            while (true) {
+                br = webcamPanel.getImage();
+                ic = new ImageIcon(br);
+                out.writeObject(ic);
+                out.flush();
+            }
+        } catch (IOException e) {
+            System.err.println("Network error in client handling: " + e.getMessage());
+            // Handle network error...
         }
-    } catch (IOException e) {
-        System.err.println("Network error in client handling: " + e.getMessage());
-        // Handle network error...
-    } catch (ClassNotFoundException e) {
-        System.err.println("Class not found error in client handling: " + e.getMessage());
-        // Handle class not found error...
     }
-}
-
-
 
     private WebcamPanel initializeWebcam() {
         webcam = Webcam.getDefault();

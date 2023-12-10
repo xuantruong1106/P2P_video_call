@@ -31,17 +31,16 @@ public class Server extends RemoveClientOutServer {
 
             if (rm.clientInfos.isEmpty()) {
                 System.out.println("There are no clients connected");
-                dos.writeBoolean(false);
+               
                 dos.writeUTF("Hello, no clients available.");
             } else {
                 System.out.println("There are clients connected");
-                dos.writeBoolean(true);
-
                 for (ClientInfo info : rm.clientInfos) {
                     dos.writeUTF("Hello, clients available: " + info.getClientName() + " Port: " + info.getPort());
                 }
             }
-
+            dos.writeUTF("Hello, no clients available.");
+            
             String clientName = din.readUTF();
             System.out.println("Client connected: " + clientName);
 

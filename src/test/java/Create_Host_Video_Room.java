@@ -83,7 +83,8 @@ public class Create_Host_Video_Room extends JFrame {
                 
                 DataInputStream din = new DataInputStream(sk1.getInputStream());
                 DataOutputStream dos = new DataOutputStream(sk1.getOutputStream());
-
+                
+                System.out.println(din.readUTF());
                 dos.writeUTF(name);
                 dos.writeInt(port);
                              

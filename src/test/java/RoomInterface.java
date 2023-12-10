@@ -43,16 +43,22 @@ public class RoomInterface extends JFrame {
                     System.out.println("ss done");
                     while(true){
                          Socket skHost = ss.accept();
-                         handleHost(skHost);
+                         if(skHost != null){
+                              handleHost(skHost);
+                         }
+                        
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(RoomInterface.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
                 try {
+                    Socket skClient = new Socket(IP_Server, port);
                     while(true){
-                        Socket skClient = new Socket(IP_Server, port);
-                        handleClient(skClient);
+                        if(skClient !=null)
+                        {
+                            handleClient(skClient);
+                        }   
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(RoomInterface.class.getName()).log(Level.SEVERE, null, ex);
@@ -205,29 +211,29 @@ public class RoomInterface extends JFrame {
             panelRight.add(webcamPanel, BorderLayout.CENTER);
             panelRight.add(buttonPanel, BorderLayout.SOUTH);
             
-//            if (sk != null) {
-//                new Thread(() -> {
-//                    try {
-////                        ObjectOutputStream outputStream = new ObjectOutputStream(sk.getOutputStream());
-////                        ImageIcon ic;
-////                        BufferedImage br;
-//                        DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
-////                        while (true) {
-////                            br = initializeWebcam().getImage();
-////                            ic = new ImageIcon(br);
-////                            outputStream.writeObject(ic);
-////                            outputStream.flush();
-//                        dos.writeUTF("220");
-////                        }
-//
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                        System.out.println("Error in createPanelRight");
-//                    }
-//                }).start();
-//            } else {
-//                System.out.println("sk null in createPanelRight");
-//            }
+            if (sk != null) {
+                new Thread(() -> {
+                    try {
+//                        ObjectOutputStream outputStream = new ObjectOutputStream(sk.getOutputStream());
+//                        ImageIcon ic;
+//                        BufferedImage br;
+                        DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
+//                        while (true) {
+//                            br = initializeWebcam().getImage();
+//                            ic = new ImageIcon(br);
+//                            outputStream.writeObject(ic);
+//                            outputStream.flush();
+                        dos.writeUTF("220");
+//                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        System.out.println("Error in createPanelRight");
+                    }
+                }).start();
+            } else {
+                System.out.println("sk null in createPanelRight");
+            }
         } else {
             System.out.println("RoomInterface.createPanelRight()");
  

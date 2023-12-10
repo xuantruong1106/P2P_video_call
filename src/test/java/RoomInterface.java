@@ -40,8 +40,12 @@ public class RoomInterface extends JFrame {
             if (isHost) {
                 try {
                     ServerSocket ss = new ServerSocket(port);
-                    Socket skHost = ss.accept();
-                    handleHost(skHost);
+                    System.out.println("ss done");
+                    while(true){
+                         Socket skHost = ss.accept();
+                        handleHost(skHost);
+                    }
+                   
                 } catch (IOException ex) {
                     Logger.getLogger(RoomInterface.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -123,6 +127,7 @@ public class RoomInterface extends JFrame {
 //                            panelLeft.repaint();
 //                            System.out.println("data 127" + inputStream.readUTF());
                         videoLabel.setText(inputStream.readUTF());
+                        panelLeft.add(videoLabel, BorderLayout.CENTER);
 //                        }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -256,6 +261,7 @@ public class RoomInterface extends JFrame {
 
                         DataInputStream dis = new DataInputStream(sk.getInputStream());
                         videoLabel.setText(dis.readUTF());
+                         panelRight.add(videoLabel, BorderLayout.CENTER);
                     } catch (Exception e) {
                         e.printStackTrace();
                         System.out.println("Error in createPanelRight");

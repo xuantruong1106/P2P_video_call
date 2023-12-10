@@ -99,8 +99,6 @@ public class RoomInterface extends JFrame {
         JButton buttonOnOffVideo = createButton("IconOnVideo.png", "IconOffVideo.png");
         JButton buttonExitVideoRoom = createButton("IconExit.png", null);
 
-       
-
         JPanel buttonPanel = new JPanel();
         
         if (!isHostGlobal) {
@@ -184,16 +182,19 @@ public class RoomInterface extends JFrame {
     private JPanel createPanelRight(Socket sk) {
 
         JPanel panelRight = new JPanel(new BorderLayout());
+        JLabel videoLabel = new JLabel();
+        JPanel buttonPanel = new JPanel();
         
         JButton buttonOnOffMic = createButton("IconOnMic.png", "IconOffMic.png");
         JButton buttonOnOffVideo = createButton("IconOnVideo.png", "IconOffVideo.png");
         JButton buttonExitVideoRoom = createButton("IconExit.png", null);
         
-        JPanel buttonPanel = new JPanel();
+        
         if (!isHostGlobal) {
             System.out.println("!isHost in createPanelRight");
             WebcamPanel webcamPanel = initializeWebcam();
             
+             
             buttonOnOffMic.addActionListener(e -> toggleMic(buttonOnOffMic));
             buttonOnOffVideo.addActionListener(e -> toggleVideo(buttonOnOffVideo));
             buttonExitVideoRoom.addActionListener(e -> exitVideoRoom());
@@ -231,19 +232,11 @@ public class RoomInterface extends JFrame {
             }
         } else {
             System.out.println("RoomInterface.createPanelRight()");
-            buttonOnOffVideo.addActionListener(e -> toggleVideo(buttonOnOffVideo));
-            buttonExitVideoRoom.addActionListener(e -> exitVideoRoom());
-            
-            buttonPanel.add(buttonOnOffVideo);
-            buttonPanel.add(buttonExitVideoRoom);
-            
-            panelRight.add(buttonPanel, BorderLayout.SOUTH);
-            
-            
+ 
             System.out.println("isHost in createPanelRight");
             JLabel labelHostInfo = new JLabel("Host IP: " + IP_Server_Global + " Port: " + portGlobal);
             panelRight.add(labelHostInfo, BorderLayout.PAGE_START);
-            JLabel videoLabel = new JLabel();
+           
 
             if (sk != null) {
                 new Thread(() -> {
@@ -261,7 +254,7 @@ public class RoomInterface extends JFrame {
 
                         DataInputStream dis = new DataInputStream(sk.getInputStream());
                         videoLabel.setText(dis.readUTF());
-                         panelRight.add(videoLabel, BorderLayout.CENTER);
+                        panelRight.add(videoLabel, BorderLayout.CENTER);
                     } catch (Exception e) {
                         e.printStackTrace();
                         System.out.println("Error in createPanelRight");

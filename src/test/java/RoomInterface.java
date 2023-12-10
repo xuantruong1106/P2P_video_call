@@ -115,7 +115,7 @@ public class RoomInterface extends JFrame {
              System.out.println("!isHost in createPanelLeft");         
             
             if (sk != null) {
-                new Thread(() -> {
+//                new Thread(() -> {
                     try {
 //                        ObjectInputStream inputStream = new ObjectInputStream(sk.getInputStream());
                         DataInputStream inputStream = new DataInputStream(sk.getInputStream());
@@ -135,7 +135,7 @@ public class RoomInterface extends JFrame {
                         e.printStackTrace();
                         System.out.println("Error in createPanelLeft");
                     }
-                }).start();
+//                }).start();
             } else {
                 System.out.println("sk null in createPanelLeft");
             }
@@ -156,7 +156,7 @@ public class RoomInterface extends JFrame {
             panelLeft.add(buttonPanel, BorderLayout.SOUTH);
             
             if (sk != null) {
-                new Thread(() -> {
+//                new Thread(() -> {
                     try {
 //                        ObjectOutputStream outputStream = new ObjectOutputStream(skHost.getOutputStream());
 //                        ImageIcon ic;
@@ -177,7 +177,7 @@ public class RoomInterface extends JFrame {
                         e.printStackTrace();
                         System.out.println("Error in createPanelLeft");
                     }
-                }).start();
+//                }).start();
             } else {
                 System.out.println("skHost null in createPanelLeft");
             }
@@ -214,7 +214,7 @@ public class RoomInterface extends JFrame {
             panelRight.add(buttonPanel, BorderLayout.SOUTH);
             
             if (sk != null) {
-                new Thread(() -> {
+//                new Thread(() -> {
                     try {
                         DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
                         dos.writeUTF("220");
@@ -225,7 +225,7 @@ public class RoomInterface extends JFrame {
                         e.printStackTrace();
                         System.out.println("Error in createPanelRight");
                     }
-                }).start();
+//                }).start();
             } else {
                 System.out.println("sk null in createPanelRight");
             }
@@ -238,7 +238,7 @@ public class RoomInterface extends JFrame {
            
 
             if (sk != null) {
-                new Thread(() -> {
+//                new Thread(() -> {
                     try {
                         DataInputStream dis = new DataInputStream(sk.getInputStream());
                         while(true){
@@ -251,7 +251,7 @@ public class RoomInterface extends JFrame {
                         e.printStackTrace();
                         System.out.println("Error in createPanelRight");
                     }
-                }).start();
+//                }).start();
                 
                 
             } else {

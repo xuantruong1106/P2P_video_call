@@ -54,12 +54,13 @@ public class RoomInterface extends JFrame {
             } else {
                 try {
                     Socket skClient = new Socket(IP_Server, port);
-                    while(true){
-                        if(skClient !=null)
-                        {
-                            handleClient(skClient);
-                        }   
-                    }
+                    handleClient(skClient);
+//                    while(true){
+//                        if(skClient !=null)
+//                        {
+//                            
+//                        }   
+//                    }
                 } catch (IOException ex) {
                     Logger.getLogger(RoomInterface.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -162,6 +163,7 @@ public class RoomInterface extends JFrame {
 //                        BufferedImage br;
                         DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
                         dos.writeUTF(" 148");
+                        dos.flush();
 
 //                        while (true) {
 //                            br = initializeWebcam().getImage();
@@ -214,16 +216,9 @@ public class RoomInterface extends JFrame {
             if (sk != null) {
                 new Thread(() -> {
                     try {
-//                        ObjectOutputStream outputStream = new ObjectOutputStream(sk.getOutputStream());
-//                        ImageIcon ic;
-//                        BufferedImage br;
                         DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
-//                        while (true) {
-//                            br = initializeWebcam().getImage();
-//                            ic = new ImageIcon(br);
-//                            outputStream.writeObject(ic);
-//                            outputStream.flush();
                         dos.writeUTF("220");
+                        dos.flush();
 //                        }
 
                     } catch (Exception e) {
@@ -245,33 +240,28 @@ public class RoomInterface extends JFrame {
             if (sk != null) {
                 new Thread(() -> {
                     try {
-//                        ObjectInputStream inputStream = new ObjectInputStream(skHost.getInputStream());
-//                        while (true) {
-//                            byte[] imageData = (byte[]) inputStream.readObject();
-//
-//                            // Display image on JLabel
-//                            ImageIcon imageIcon = new ImageIcon(imageData);
-//                            videoLabel.setIcon(imageIcon);
-//                            panelRight.revalidate();
-//                            panelRight.repaint();
-//                        }
-
                         DataInputStream dis = new DataInputStream(sk.getInputStream());
-                        videoLabel.setText(dis.readUTF());
-                        panelRight.add(videoLabel, BorderLayout.CENTER);
+                        while(true){
+                            String message = dis.readUTF();
+                            System.out.println(message);
+                            videoLabel.setText(message);
+                            panelRight.add(videoLabel, BorderLayout.CENTER);
+                        } 
                     } catch (Exception e) {
                         e.printStackTrace();
                         System.out.println("Error in createPanelRight");
                     }
                 }).start();
+                
+                
             } else {
                 System.out.println("skHost null in createPanelRight");
             }
         }
-
+        
         return panelRight;
     }
-
+    
     private WebcamPanel initializeWebcam() {
         webcam = Webcam.getDefault();
         if (webcam.isOpen()) {
@@ -345,6 +335,6 @@ public class RoomInterface extends JFrame {
     }
 
 //     public static void main(String[] args) {
-//        new RoomInterface("localhost", 1235, "d", true);
+//        new RoomInterface("192.168.0.144", 1235, "d", true);
 //    }
 }

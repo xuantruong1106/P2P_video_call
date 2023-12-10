@@ -84,7 +84,7 @@ public class MainInterface extends JFrame {
 //                DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
 //                dos.writeUTF(enterName);
                 
-                RoomInterface ri = new RoomInterface(IP, port, enterName, isHost);
+                ClientInterface ri = new ClientInterface(IP, port, enterName);
                 ri.setLocationRelativeTo(null);
                 ri.setVisible(true);
 

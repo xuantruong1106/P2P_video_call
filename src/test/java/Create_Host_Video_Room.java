@@ -88,7 +88,7 @@ public class Create_Host_Video_Room extends JFrame {
 //                dos.writeUTF(name);
 //                dos.writeInt(port);
                              
-                RoomInterface ri = new RoomInterface(this.IP_Server, port, name, isHost);
+                HostInterface ri = new HostInterface(this.IP_Server, port, name);
 
                 ri.setLocationRelativeTo(null);
                 ri.setVisible(true);

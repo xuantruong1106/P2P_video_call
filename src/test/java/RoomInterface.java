@@ -87,7 +87,7 @@ public class RoomInterface extends JFrame {
         JButton buttonExitVideoRoom = createButton("IconExit.png", null);
         JPanel buttonPanel = new JPanel();
 
-        WebcamPanel webcamPanel = initializeWebcam();
+        
         
         JLabel video = new JLabel();
 
@@ -123,7 +123,7 @@ public class RoomInterface extends JFrame {
                     // Handle class not found error...
                 }
             } else {
-                 
+                 WebcamPanel webcamPanel = initializeWebcam();
                  panelCenter.add(webcamPanel, BorderLayout.CENTER);
                  
                   try {

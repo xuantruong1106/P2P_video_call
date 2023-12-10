@@ -5,6 +5,8 @@ import com.github.sarxos.webcam.WebcamPanel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,6 +16,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 public class RoomInterface extends JFrame {
 
@@ -23,7 +26,7 @@ public class RoomInterface extends JFrame {
     private static boolean isHostGlobal;
     private static String IP_Server_Global;
     private static int portGlobal;
-
+    private byte[] bytes;
   public RoomInterface(String IP_Server, int port, String name, boolean isHost) {
 
         this.IP_Server_Global = IP_Server;
@@ -42,9 +45,12 @@ public class RoomInterface extends JFrame {
                     try {
                         ServerSocket ss = new ServerSocket(port);
                         System.out.println("ss done");
-                        Socket skHost = ss.accept();
-                        System.out.println(skHost);
-                        handle(skHost);
+                        while(true){
+                             Socket skHost = ss.accept();
+                            System.out.println(skHost);
+                            handle(skHost);
+                        }
+                       
                     } catch (IOException ex) {
                         Logger.getLogger(RoomInterface.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -134,19 +140,46 @@ public class RoomInterface extends JFrame {
             panelCenter.add(buttonPanel, BorderLayout.SOUTH);
 
             try {
-                DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
-                DataInputStream dis = new DataInputStream(sk.getInputStream());
+//                DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
+//                DataInputStream dis = new DataInputStream(sk.getInputStream());
+//
+//                dos.writeUTF("host");
+//                dos.flush();
 
-                dos.writeUTF("host");
-                dos.flush();
-                
-                if(dis != null)
-                {
-                    video.setText(dis.readUTF());
-                    panelCenter.add(video, BorderLayout.EAST);
-                }else{
-                    System.out.println("null");
+//                if(dis != null)
+//                {
+//                    video.setText(dis.readUTF());
+//                    panelCenter.add(video, BorderLayout.EAST);
+//                }else{
+//                    System.out.println("null");
+//                }
+
+               while (true) {
+                    BufferedImage image = webcam.getImage();
+
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    ImageIO.write(image, "jpg", baos);
+                    byte[] bytes = baos.toByteArray();
+
+                    DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
+                    dos.writeInt(bytes.length);
+                    dos.write(bytes);
+
+                    DataInputStream dis = new DataInputStream(sk.getInputStream());
+
+                    int length = dis.readInt(); // read length of incoming message
+                    bytes = new byte[length];
+
+                    if (length > 0) {
+                        dis.readFully(bytes, 0, bytes.length); // read the message
+                    }
+                    BufferedImage receivedImage = ImageIO.read(new ByteArrayInputStream(bytes));
+                    // Process the received image...
                 }
+              
+                
+                
+
                 
 
             } catch (IOException e) {

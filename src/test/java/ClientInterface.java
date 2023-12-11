@@ -116,6 +116,10 @@ public class ClientInterface extends JFrame {
                 }).start();
                 
                   if(socket.isClosed() ){
+                    in.close();
+                    out.close();
+                    out.flush();
+                    webcam.close();
                     MainInterface mainInterface = new MainInterface();
                     mainInterface.setVisible(true);
                     setVisible(false);

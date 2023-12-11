@@ -121,6 +121,10 @@ public class HostInterface extends JFrame {
                 }).start();
                 
                 if(serverSocket.isClosed() || clientSocket.isClosed() ){
+                    in.close();
+                    out.close();
+                    out.flush();
+                    webcam.close();
                     MainInterface mainInterface = new MainInterface();
                     mainInterface.setVisible(true);
                     setVisible(false);

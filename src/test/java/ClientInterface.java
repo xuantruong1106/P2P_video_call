@@ -46,7 +46,7 @@ public class ClientInterface extends JFrame {
 
                 panelCenter.add(buttonPanel, BorderLayout.SOUTH);
                 panelCenter.add(video, BorderLayout.CENTER);
-                panelCenter.add(videoIn, BorderLayout.EAST);
+//                panelCenter.add(videoIn, BorderLayout.EAST);
                 
                 containerPanelLeftAndRight.add(panelCenter);
 
@@ -59,24 +59,25 @@ public class ClientInterface extends JFrame {
         try {
             Socket Socket = new Socket(IP_Server, port);
             
-            ObjectInputStream in = new ObjectInputStream(Socket.getInputStream());
+//            ObjectInputStream in = new ObjectInputStream(Socket.getInputStream());
             ObjectOutputStream out = new ObjectOutputStream(Socket.getOutputStream());
            
             ImageIcon ic ;
             BufferedImage br;
-            Webcam cam = Webcam.getDefault();
             
-            if (cam.isOpen()) {
-                cam.close();
+            webcam = Webcam.getDefault();
+            
+            if (webcam.isOpen()) {
+                webcam.close();
             }
             
-            cam.setViewSize(new Dimension(640, 480));
-            cam.open();
+            webcam.setViewSize(new Dimension(640, 480));
+            webcam.open();
             isCameraOn = true;
             isMicOn = true;
             
             while (true) {            
-                br = cam.getImage();
+                br = webcam.getImage();
                 ic = new ImageIcon(br);
                 out.writeObject(ic);
                 video.setIcon(ic);

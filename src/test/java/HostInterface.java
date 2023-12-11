@@ -43,7 +43,7 @@ public class HostInterface extends JFrame {
 
                 panelCenter.add(buttonPanel, BorderLayout.SOUTH);
                 panelCenter.add(video, BorderLayout.CENTER);
-                panelCenter.add(videoOut, BorderLayout.EAST);
+//                panelCenter.add(videoOut, BorderLayout.EAST);
                 
                 containerPanelLeftAndRight.add(panelCenter);
 
@@ -60,20 +60,20 @@ public class HostInterface extends JFrame {
                 System.out.println("Client connected: " + clientSocket);
 
                 ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
-                ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+//              ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
                 
-                 ImageIcon icOut;
-                 BufferedImage br;
-                Webcam cam = Webcam.getDefault();
-                
-                if (cam.isOpen()) {
-                    cam.close();
-                }
-
-                cam.setViewSize(new Dimension(640, 480));
-                cam.open();
-                isCameraOn = true;
-                isMicOn = true;
+//                 ImageIcon icOut;
+//                 BufferedImage br;
+//                Webcam cam = Webcam.getDefault();
+//                
+//                if (cam.isOpen()) {
+//                    cam.close();
+//                }
+//
+//                cam.setViewSize(new Dimension(640, 480));
+//                cam.open();
+//                isCameraOn = true;
+//                isMicOn = true;
             
                 while (true) {
                     ImageIcon ic = (ImageIcon) in.readObject();

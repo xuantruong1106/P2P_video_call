@@ -87,7 +87,7 @@ public class HostInterface extends JFrame {
                 new Thread(() -> {
                     try {
                         in = new ObjectInputStream(clientSocket.getInputStream());
-                        if(in != null){
+                        if(!serverSocket.isClosed() && !clientSocket.isClosed() && in != null){
                             while (true) {
                                 ImageIcon ic = (ImageIcon) in.readObject();
                                 video.setIcon(ic);
@@ -95,6 +95,9 @@ public class HostInterface extends JFrame {
                             }
                         }else{
                             video.setIcon(null);
+                            in.close();
+                            out.close();
+                            out.flush();
                         }
                             
                         

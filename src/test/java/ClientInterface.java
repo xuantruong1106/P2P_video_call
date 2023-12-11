@@ -111,7 +111,7 @@ public class ClientInterface extends JFrame {
                 new Thread(() -> {
                     try {
                         in = new ObjectInputStream(socket.getInputStream());
-                        if(in != null ){
+                        if(!socket.isClosed() && in != null){
                                 while (true) {
                                 ImageIcon icIn = (ImageIcon) in.readObject();
                                 videoIn.setIcon(icIn);
@@ -119,6 +119,14 @@ public class ClientInterface extends JFrame {
                             }
                         }else{
                             videoIn.setIcon(null);
+                            in.close();
+                            out.close();
+                            out.flush();
+                            webcam.close();
+                            MainInterface mainInterface = new MainInterface();
+                            mainInterface.setVisible(true);
+                            setVisible(false);
+                            dispose();
                         }
                         
                     } catch (IOException | ClassNotFoundException ex) {
@@ -126,16 +134,6 @@ public class ClientInterface extends JFrame {
                     }
                 }).start();
                 
-                  if(socket.isClosed() ){
-                    in.close();
-                    out.close();
-                    out.flush();
-                    webcam.close();
-                    MainInterface mainInterface = new MainInterface();
-                    mainInterface.setVisible(true);
-                    setVisible(false);
-                    dispose();
-                }
 
             } catch (IOException ex) {
                 Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);

@@ -45,8 +45,19 @@ public class ClientInterface extends JFrame {
             buttonPanel.add(buttonOnOffMic);
             buttonPanel.add(buttonOnOffVideo);
             buttonPanel.add(buttonExitVideoRoom);
+            
+            JPanel webcamPanel = new JPanel();
+            webcamPanel.setLayout(new BorderLayout());
+            webcam = Webcam.getDefault();
+            WebcamPanel camPanel = new WebcamPanel(webcam);
+            camPanel.setFPSDisplayed(true);
+            camPanel.setDisplayDebugInfo(true);
+            camPanel.setImageSizeDisplayed(true);
+            webcamPanel.add(camPanel, BorderLayout.CENTER);
+           
 
             panelCenter.add(buttonPanel, BorderLayout.SOUTH);
+            panelCenter.add(webcamPanel, BorderLayout.CENTER);
             panelCenter.add(videoIn, BorderLayout.EAST);
 
             containerPanelLeftAndRight.add(panelCenter);

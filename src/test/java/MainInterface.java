@@ -75,21 +75,17 @@ public class MainInterface extends JFrame {
                 int port = Integer.parseInt(textFieldEnterPort.getText());
                 String enterName = String.format(textFieldEnterName.getText());
 
-                boolean isHost = false;
                 
-                System.out.println("Main interface  89: "+ IP + " " + port + " " + enterName + " " + isHost);
+                System.out.println("Main interface  89: "+ IP + " " + port + " " + enterName);
                 
-//                Socket sk = new Socket(IP, port);
-//                
-//                DataOutputStream dos = new DataOutputStream(sk.getOutputStream());
-//                dos.writeUTF(enterName);
                 
                 ClientInterface ri = new ClientInterface(IP, port, enterName);
-                ri.setLocationRelativeTo(null);
-                ri.setVisible(true);
+//                ri.setLocationRelativeTo(null);
+//                ri.setVisible(true);
 
-                dispose();
                 setVisible(false);
+                dispose();
+               
                 
             } catch (Exception ex) {
                 Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);

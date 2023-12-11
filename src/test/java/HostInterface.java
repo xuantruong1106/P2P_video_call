@@ -43,10 +43,21 @@ public class HostInterface extends JFrame {
             buttonPanel.add(buttonOnOffMic);
             buttonPanel.add(buttonOnOffVideo);
             buttonPanel.add(buttonExitVideoRoom);
-
+            
+            JPanel webcamPanel = new JPanel();
+            webcamPanel.setLayout(new BorderLayout());
+            webcam = Webcam.getDefault();
+            WebcamPanel camPanel = new WebcamPanel(webcam);
+            camPanel.setFPSDisplayed(true);
+            camPanel.setDisplayDebugInfo(true);
+            camPanel.setImageSizeDisplayed(true);
+            webcamPanel.add(camPanel, BorderLayout.CENTER);
+           
+            
             panelCenter.add(buttonPanel, BorderLayout.SOUTH);
-            panelCenter.add(video, BorderLayout.CENTER);
-            panelCenter.add(videoOut, BorderLayout.EAST);
+            panelCenter.add(video, BorderLayout.EAST);
+//            panelCenter.add(videoOut, BorderLayout.CENTER);
+            panelCenter.add(webcamPanel, BorderLayout.CENTER);
 
             containerPanelLeftAndRight.add(panelCenter);
 
@@ -61,23 +72,11 @@ public class HostInterface extends JFrame {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Client connected: " + clientSocket);
 
-                ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
-                ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-
-                webcam = Webcam.getDefault();
-
-                if (webcam.isOpen()) {
-                    webcam.close();
-                }
-
-                webcam.setViewSize(new Dimension(640, 480));
-                webcam.open();
-                isCameraOn = true;
-                isMicOn = true;
 
                 // Thread for receiving data
                 new Thread(() -> {
                     try {
+                        ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
                         while (true) {
                             ImageIcon ic = (ImageIcon) in.readObject();
                             video.setIcon(ic);
@@ -91,13 +90,26 @@ public class HostInterface extends JFrame {
                 // Thread for sending data
                 new Thread(() -> {
                     try {
+                        ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+
+                        webcam = Webcam.getDefault();
+
+                        if (webcam.isOpen()) {
+                            webcam.close();
+                        }
+
+                        webcam.setViewSize(new Dimension(640, 480));
+                        webcam.open();
+                        isCameraOn = true;
+                        isMicOn = true;
+
                         while (true) {
                             br = webcam.getImage();
                             icOut = new ImageIcon(br);
-                            videoOut.setIcon(icOut);
+//                            videoOut.setIcon(icOut);
                             out.writeObject(icOut);
                             out.flush();
-                            System.out.println("outToHost");
+                            System.out.println("outToClient");
                         }
                     } catch (IOException ex) {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);

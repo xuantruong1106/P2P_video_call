@@ -18,6 +18,7 @@ public class ClientInterface extends JFrame {
     private boolean isMicOn = true;
     private static JLabel video = new JLabel();
     private static JLabel videoIn = new JLabel();
+    private WebcamPanel wp = new WebcamPanel(webcam);
     private ImageIcon ic;
     private BufferedImage br;
 
@@ -46,8 +47,7 @@ public class ClientInterface extends JFrame {
             buttonPanel.add(buttonExitVideoRoom);
 
             panelCenter.add(buttonPanel, BorderLayout.SOUTH);
-            panelCenter.add(video, BorderLayout.CENTER);
-//                panelCenter.add(videoIn, BorderLayout.EAST);
+            panelCenter.add(videoIn, BorderLayout.EAST);
 
             containerPanelLeftAndRight.add(panelCenter);
 
@@ -59,28 +59,28 @@ public class ClientInterface extends JFrame {
             try {
                 Socket socket = new Socket(IP_Server, port);
 
-                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-
-                webcam = Webcam.getDefault();
-
-                if (webcam.isOpen()) {
-                    webcam.close();
-                }
-
-                webcam.setViewSize(new Dimension(640, 480));
-                webcam.open();
-                isCameraOn = true;
-                isMicOn = true;
-
+                
                 // Thread for sending data
                 new Thread(() -> {
                     try {
+                        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+
+                        webcam = Webcam.getDefault();
+
+                        if (webcam.isOpen()) {
+                            webcam.close();
+                        }
+
+                        webcam.setViewSize(new Dimension(640, 480));
+                        webcam.open();
+                        isCameraOn = true;
+                        isMicOn = true;
+                        
                         while (true) {
                             br = webcam.getImage();
                             ic = new ImageIcon(br);
                             out.writeObject(ic);
-                            video.setIcon(ic);
+//                            video.setIcon(ic);
                             out.flush();
                             System.out.println("outToHost");
                         }
@@ -92,10 +92,11 @@ public class ClientInterface extends JFrame {
                 // Thread for receiving data
                 new Thread(() -> {
                     try {
+                        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
                         while (true) {
                             ImageIcon icIn = (ImageIcon) in.readObject();
                             videoIn.setIcon(icIn);
-                            System.out.println("inFromClient");
+                            System.out.println("inFromHost");
                         }
                     } catch (IOException | ClassNotFoundException ex) {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);

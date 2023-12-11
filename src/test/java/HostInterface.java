@@ -43,20 +43,20 @@ public class HostInterface extends JFrame {
             buttonPanel.add(buttonOnOffMic);
             buttonPanel.add(buttonOnOffVideo);
             buttonPanel.add(buttonExitVideoRoom);
-            
+
             JPanel webcamPanel = new JPanel();
             webcamPanel.setLayout(new BorderLayout());
             webcam = Webcam.getDefault();
+            webcam.setViewSize(new Dimension(640, 480));
+            
             WebcamPanel camPanel = new WebcamPanel(webcam);
             camPanel.setFPSDisplayed(true);
             camPanel.setDisplayDebugInfo(true);
             camPanel.setImageSizeDisplayed(true);
             webcamPanel.add(camPanel, BorderLayout.CENTER);
-           
-            
+
             panelCenter.add(buttonPanel, BorderLayout.SOUTH);
             panelCenter.add(video, BorderLayout.EAST);
-//            panelCenter.add(videoOut, BorderLayout.CENTER);
             panelCenter.add(webcamPanel, BorderLayout.CENTER);
 
             containerPanelLeftAndRight.add(panelCenter);
@@ -67,11 +67,11 @@ public class HostInterface extends JFrame {
         });
         new Thread(() -> {
             try {
+                System.out.println(port);
                 ServerSocket serverSocket = new ServerSocket(port);
                 System.out.println("Server socket initialized");
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Client connected: " + clientSocket);
-
 
                 // Thread for receiving data
                 new Thread(() -> {
@@ -92,21 +92,23 @@ public class HostInterface extends JFrame {
                     try {
                         ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
 
-                        webcam = Webcam.getDefault();
+//                        webcam = Webcam.getDefault();
+                        new Thread(() -> {
+                          
+//                            if (webcam.isOpen()) {
+//                                webcam.close();
+//                            }
+                            webcam.open();
+                           
 
-                        if (webcam.isOpen()) {
-                            webcam.close();
-                        }
-
-                        webcam.setViewSize(new Dimension(640, 480));
-                        webcam.open();
-                        isCameraOn = true;
-                        isMicOn = true;
+                            isCameraOn = true;
+                            isMicOn = true;
+                        }).start();
 
                         while (true) {
+                            
                             br = webcam.getImage();
                             icOut = new ImageIcon(br);
-//                            videoOut.setIcon(icOut);
                             out.writeObject(icOut);
                             out.flush();
                             System.out.println("outToClient");

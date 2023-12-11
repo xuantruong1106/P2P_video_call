@@ -18,7 +18,6 @@ public class ClientInterface extends JFrame {
     private boolean isMicOn = true;
     private static JLabel video = new JLabel();
     private static JLabel videoIn = new JLabel();
-    private WebcamPanel wp = new WebcamPanel(webcam);
     private ImageIcon ic;
     private BufferedImage br;
 
@@ -49,6 +48,7 @@ public class ClientInterface extends JFrame {
             JPanel webcamPanel = new JPanel();
             webcamPanel.setLayout(new BorderLayout());
             webcam = Webcam.getDefault();
+            webcam.setViewSize(new Dimension(640, 480));
             WebcamPanel camPanel = new WebcamPanel(webcam);
             camPanel.setFPSDisplayed(true);
             camPanel.setDisplayDebugInfo(true);
@@ -78,11 +78,11 @@ public class ClientInterface extends JFrame {
 
                         webcam = Webcam.getDefault();
 
-                        if (webcam.isOpen()) {
-                            webcam.close();
-                        }
-
-                        webcam.setViewSize(new Dimension(640, 480));
+//                        if (webcam.isOpen()) {
+//                            webcam.close();
+//                        }
+//
+//                        webcam.setViewSize(new Dimension(640, 480));
                         webcam.open();
                         isCameraOn = true;
                         isMicOn = true;
@@ -91,7 +91,6 @@ public class ClientInterface extends JFrame {
                             br = webcam.getImage();
                             ic = new ImageIcon(br);
                             out.writeObject(ic);
-//                            video.setIcon(ic);
                             out.flush();
                             System.out.println("outToHost");
                         }

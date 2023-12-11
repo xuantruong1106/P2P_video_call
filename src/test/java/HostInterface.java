@@ -24,7 +24,7 @@ public class HostInterface extends JFrame {
     public HostInterface(int port, String name) throws ClassNotFoundException {
         SwingUtilities.invokeLater(() -> {
 
-            setSize(800, 400);
+            setSize(1200, 700);
             setTitle("Host Video Room");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -117,10 +117,19 @@ public class HostInterface extends JFrame {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }).start();
+                
+                if(serverSocket.isClosed() || clientSocket.isClosed() ){
+                    MainInterface mainInterface = new MainInterface();
+                    mainInterface.setVisible(true);
+                    setVisible(false);
+                    dispose();
+                }
 
             } catch (IOException ex) {
                 Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
+            
         }).start();
 
     }

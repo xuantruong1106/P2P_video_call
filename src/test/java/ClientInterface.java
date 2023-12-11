@@ -24,7 +24,7 @@ public class ClientInterface extends JFrame {
     public ClientInterface(String IP_Server, int port, String name) throws ClassNotFoundException {
         SwingUtilities.invokeLater(() -> {
 
-            setSize(800, 400);
+            setSize(1200, 700);
             setTitle("Client Video Room");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -112,6 +112,13 @@ public class ClientInterface extends JFrame {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }).start();
+                
+                  if(socket.isClosed() ){
+                    MainInterface mainInterface = new MainInterface();
+                    mainInterface.setVisible(true);
+                    setVisible(false);
+                    dispose();
+                }
 
             } catch (IOException ex) {
                 Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);

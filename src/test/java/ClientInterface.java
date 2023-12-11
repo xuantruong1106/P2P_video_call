@@ -22,7 +22,7 @@ public class ClientInterface extends JFrame {
     private BufferedImage br;
     private ObjectInputStream in;
     private ObjectOutputStream out;
-
+    private Socket socket;
     public ClientInterface(String IP_Server, int port, String name) throws ClassNotFoundException {
         SwingUtilities.invokeLater(() -> {
 
@@ -41,7 +41,13 @@ public class ClientInterface extends JFrame {
 
             buttonOnOffMic.addActionListener(e -> toggleMic(buttonOnOffMic));
             buttonOnOffVideo.addActionListener(e -> toggleVideo(buttonOnOffVideo));
-            buttonExitVideoRoom.addActionListener(e -> exitVideoRoom());
+            buttonExitVideoRoom.addActionListener(e -> {
+                try {
+                    exitVideoRoom();
+                } catch (IOException ex) {
+                    Logger.getLogger(ClientInterface.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
 
             buttonPanel.add(buttonOnOffMic);
             buttonPanel.add(buttonOnOffVideo);
@@ -70,7 +76,7 @@ public class ClientInterface extends JFrame {
 
         new Thread(() -> {
             try {
-                Socket socket = new Socket(IP_Server, port);
+                socket = new Socket(IP_Server, port);
 
                 
                 // Thread for sending data
@@ -156,8 +162,12 @@ public class ClientInterface extends JFrame {
         button.setIcon(new ImageIcon(scaledImage));
     }
 
-    private void exitVideoRoom() {
-
+    private void exitVideoRoom() throws IOException {
+        socket.close();
+        in.close();
+        out.close();
+        out.flush();
+        webcam.close();
         MainInterface main = new MainInterface();
         main.setVisible(true);
         setVisible(false);

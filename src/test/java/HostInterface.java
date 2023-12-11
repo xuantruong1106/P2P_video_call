@@ -22,7 +22,9 @@ public class HostInterface extends JFrame {
     private BufferedImage br;
     private ObjectInputStream in;
     private ObjectOutputStream out;
-
+    private Socket clientSocket;
+    private ServerSocket serverSocket;
+    
     public HostInterface(int port, String name) throws ClassNotFoundException {
         SwingUtilities.invokeLater(() -> {
 
@@ -40,7 +42,13 @@ public class HostInterface extends JFrame {
 
             buttonOnOffMic.addActionListener(e -> toggleMic(buttonOnOffMic));
             buttonOnOffVideo.addActionListener(e -> toggleVideo(buttonOnOffVideo));
-            buttonExitVideoRoom.addActionListener(e -> exitVideoRoom());
+            buttonExitVideoRoom.addActionListener(e -> {
+                try {
+                    exitVideoRoom();
+                } catch (IOException ex) {
+                    Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
 
             buttonPanel.add(buttonOnOffMic);
             buttonPanel.add(buttonOnOffVideo);
@@ -70,9 +78,9 @@ public class HostInterface extends JFrame {
         new Thread(() -> {
             try {
                 System.out.println(port);
-                ServerSocket serverSocket = new ServerSocket(port);
+                serverSocket = new ServerSocket(port);
                 System.out.println("Server socket initialized");
-                Socket clientSocket = serverSocket.accept();
+                clientSocket = serverSocket.accept();
                 System.out.println("Client connected: " + clientSocket);
 
                 // Thread for receiving data
@@ -163,7 +171,13 @@ public class HostInterface extends JFrame {
         button.setIcon(new ImageIcon(scaledImage));
     }
 
-    private void exitVideoRoom() {
+    private void exitVideoRoom() throws IOException {
+        serverSocket.close();
+        clientSocket.close();
+        in.close();
+        out.close();
+        out.flush();
+        webcam.close();
         MainInterface main = new MainInterface();
         main.setVisible(true);
         setVisible(false);

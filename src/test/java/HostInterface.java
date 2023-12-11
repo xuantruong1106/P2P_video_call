@@ -87,11 +87,17 @@ public class HostInterface extends JFrame {
                 new Thread(() -> {
                     try {
                         in = new ObjectInputStream(clientSocket.getInputStream());
-                        while (true) {
-                            ImageIcon ic = (ImageIcon) in.readObject();
-                            video.setIcon(ic);
-                            System.out.println("inFromClient");
+                        if(in != null){
+                            while (true) {
+                                ImageIcon ic = (ImageIcon) in.readObject();
+                                video.setIcon(ic);
+                                System.out.println("inFromClient");
+                            }
+                        }else{
+                            video.setIcon(null);
                         }
+                            
+                        
                     } catch (IOException | ClassNotFoundException ex) {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -127,17 +133,6 @@ public class HostInterface extends JFrame {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }).start();
-                
-                if(serverSocket.isClosed() || clientSocket.isClosed() ){
-                    in.close();
-                    out.close();
-                    out.flush();
-                    webcam.close();
-                    MainInterface mainInterface = new MainInterface();
-                    mainInterface.setVisible(true);
-                    setVisible(false);
-                    dispose();
-                }
 
             } catch (IOException ex) {
                 Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);

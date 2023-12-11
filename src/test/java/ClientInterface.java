@@ -111,11 +111,16 @@ public class ClientInterface extends JFrame {
                 new Thread(() -> {
                     try {
                         in = new ObjectInputStream(socket.getInputStream());
-                        while (true) {
-                            ImageIcon icIn = (ImageIcon) in.readObject();
-                            videoIn.setIcon(icIn);
-                            System.out.println("inFromHost");
+                        if(in != null ){
+                                while (true) {
+                                ImageIcon icIn = (ImageIcon) in.readObject();
+                                videoIn.setIcon(icIn);
+                                System.out.println("inFromHost");
+                            }
+                        }else{
+                            videoIn.setIcon(null);
                         }
+                        
                     } catch (IOException | ClassNotFoundException ex) {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
                     }

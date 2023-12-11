@@ -15,8 +15,8 @@ public class HostInterface extends JFrame {
     private Webcam webcam;
     private boolean isCameraOn = true;
     private boolean isMicOn = true;
-    public static JLabel video = new JLabel();
-    public static JLabel  videoOut = new JLabel();
+    private static JLabel video = new JLabel();
+    private static JLabel  videoOut = new JLabel();
     public HostInterface(int port, String name) throws ClassNotFoundException {
         SwingUtilities.invokeLater(() -> {
             
@@ -62,8 +62,8 @@ public class HostInterface extends JFrame {
                 ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
                 ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
                 
-                ImageIcon icOut;
-                BufferedImage br;
+                 ImageIcon icOut;
+                 BufferedImage br;
                 Webcam cam = Webcam.getDefault();
                 
                 if (cam.isOpen()) {
@@ -78,15 +78,14 @@ public class HostInterface extends JFrame {
                 while (true) {
                     ImageIcon ic = (ImageIcon) in.readObject();
                     video.setIcon(ic);
-                    System.out.println("in");
+                    System.out.println("inFromClient");
                     
-                    
-                    br = cam.getImage();
-                    icOut = new ImageIcon(br);
-                    out.writeObject(icOut);
-                    videoOut.setIcon(icOut);
-                    out.flush();
-                    System.out.println("out");
+//                    br = cam.getImage();
+//                    icOut = new ImageIcon(br);
+//                    videoOut.setIcon(icOut);
+//                    out.writeObject(icOut);
+//                    out.flush();
+//                    System.out.println("outToHost");
                     
                 }
             } catch (IOException ex) {

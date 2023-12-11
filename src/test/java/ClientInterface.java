@@ -15,8 +15,8 @@ public class ClientInterface extends JFrame {
     private Webcam webcam;
     private boolean isCameraOn = true;
     private boolean isMicOn = true;
-    public static JLabel video = new JLabel();
-    public static JLabel videoIn = new JLabel();
+    private static JLabel video = new JLabel();
+    private static JLabel videoIn = new JLabel();
     
     public ClientInterface(String IP_Server, int port, String name) throws ClassNotFoundException {
         SwingUtilities.invokeLater(() -> {
@@ -81,19 +81,16 @@ public class ClientInterface extends JFrame {
                 out.writeObject(ic);
                 video.setIcon(ic);
                 out.flush();
-
-                System.out.println("data done");
+                System.out.println("outToHost");
                 
-                ImageIcon icIn = (ImageIcon) in.readObject();
-                videoIn.setIcon(icIn);
-                System.out.println("in");
+//                ImageIcon icIn = (ImageIcon) in.readObject();
+//                videoIn.setIcon(ic);
+//                System.out.println("inFromClient");
             }
             
         } catch (IOException ex) {
             Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
-        }   catch (ClassNotFoundException ex) {
-                Logger.getLogger(ClientInterface.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        }
         
      }).start();
     }

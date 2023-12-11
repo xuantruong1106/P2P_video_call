@@ -24,6 +24,7 @@ public class ClientInterface extends JFrame {
     private ObjectOutputStream out;
     private Socket socket;
     public ClientInterface(String IP_Server, int port, String name) throws ClassNotFoundException {
+        
         SwingUtilities.invokeLater(() -> {
 
             setSize(1200, 700);
@@ -63,7 +64,6 @@ public class ClientInterface extends JFrame {
             camPanel.setImageSizeDisplayed(true);
             webcamPanel.add(camPanel, BorderLayout.CENTER);
            
-
             panelCenter.add(buttonPanel, BorderLayout.SOUTH);
             panelCenter.add(webcamPanel, BorderLayout.CENTER);
             panelCenter.add(videoIn, BorderLayout.EAST);
@@ -78,19 +78,11 @@ public class ClientInterface extends JFrame {
             try {
                 socket = new Socket(IP_Server, port);
 
-                
-                // Thread for sending data
                 new Thread(() -> {
                     try {
                         out = new ObjectOutputStream(socket.getOutputStream());
 
                         webcam = Webcam.getDefault();
-
-//                        if (webcam.isOpen()) {
-//                            webcam.close();
-//                        }
-//
-//                        webcam.setViewSize(new Dimension(640, 480));
                         webcam.open();
                         isCameraOn = true;
                         isMicOn = true;
@@ -107,39 +99,23 @@ public class ClientInterface extends JFrame {
                     }
                 }).start();
 
-                // Thread for receiving data
                 new Thread(() -> {
                     try {
                         in = new ObjectInputStream(socket.getInputStream());
-                        if(!socket.isClosed() && in != null){
+                       
                                 while (true) {
                                 ImageIcon icIn = (ImageIcon) in.readObject();
                                 videoIn.setIcon(icIn);
                                 System.out.println("inFromHost");
-                            }
-                        }else{
-                            videoIn.setIcon(null);
-                            in.close();
-                            out.close();
-                            out.flush();
-                            webcam.close();
-                            MainInterface mainInterface = new MainInterface();
-                            mainInterface.setVisible(true);
-                            setVisible(false);
-                            dispose();
-                        }
-                        
+                                }
                     } catch (IOException | ClassNotFoundException ex) {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }).start();
-                
-
             } catch (IOException ex) {
                 Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
             }
         }).start();
-
     }
 
     private void toggleMic(JButton buttonOnOffMic) {
@@ -182,8 +158,4 @@ public class ClientInterface extends JFrame {
         Image scaledImage = iconOn.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         return new JButton(new ImageIcon(scaledImage));
     }
-
-//     public static void main(String[] args) throws ClassNotFoundException {
-//        new ClientInterface( "192.168.0.144",1111, "d");
-//    }
 }

@@ -87,39 +87,23 @@ public class HostInterface extends JFrame {
                 new Thread(() -> {
                     try {
                         in = new ObjectInputStream(clientSocket.getInputStream());
-                        if(!serverSocket.isClosed() && !clientSocket.isClosed() && in != null){
+                       
                             while (true) {
                                 ImageIcon ic = (ImageIcon) in.readObject();
                                 video.setIcon(ic);
                                 System.out.println("inFromClient");
-                            }
-                        }else{
-                            video.setIcon(null);
-                            in.close();
-                            out.close();
-                            out.flush();
                         }
-                            
-                        
                     } catch (IOException | ClassNotFoundException ex) {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }).start();
 
-                // Thread for sending data
                 new Thread(() -> {
                     try {
                         out = new ObjectOutputStream(clientSocket.getOutputStream());
 
-//                        webcam = Webcam.getDefault();
                         new Thread(() -> {
-                          
-//                            if (webcam.isOpen()) {
-//                                webcam.close();
-//                            }
                             webcam.open();
-                           
-
                             isCameraOn = true;
                             isMicOn = true;
                         }).start();
@@ -136,14 +120,11 @@ public class HostInterface extends JFrame {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }).start();
-
             } catch (IOException ex) {
                 Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            
+                video.setIcon(null);
+            }  
         }).start();
-
     }
 
     private void toggleMic(JButton buttonOnOffMic) {
@@ -170,17 +151,16 @@ public class HostInterface extends JFrame {
     }
 
     private void exitVideoRoom() throws IOException {
-        serverSocket.close();
-        clientSocket.close();
-        in.close();
-        out.close();
-        out.flush();
-        webcam.close();
-        MainInterface main = new MainInterface();
-        main.setVisible(true);
-        setVisible(false);
-        dispose();
-
+            serverSocket.close();
+            clientSocket.close();
+            in.close();
+            out.close();
+            out.flush();
+            webcam.close();
+            MainInterface main = new MainInterface();
+            main.setVisible(true);
+            setVisible(false);
+            dispose();
     }
 
     private JButton createButton(String iconOnPath, String iconOffPath) {
@@ -188,8 +168,4 @@ public class HostInterface extends JFrame {
         Image scaledImage = iconOn.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         return new JButton(new ImageIcon(scaledImage));
     }
-
-//    public static void main(String[] args) throws ClassNotFoundException {
-//        new HostInterface(1111, "d");
-//    }
 }

@@ -20,6 +20,8 @@ public class HostInterface extends JFrame {
     private static JLabel videoOut = new JLabel();
     private ImageIcon icOut;
     private BufferedImage br;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
 
     public HostInterface(int port, String name) throws ClassNotFoundException {
         SwingUtilities.invokeLater(() -> {
@@ -76,7 +78,7 @@ public class HostInterface extends JFrame {
                 // Thread for receiving data
                 new Thread(() -> {
                     try {
-                        ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
+                        in = new ObjectInputStream(clientSocket.getInputStream());
                         while (true) {
                             ImageIcon ic = (ImageIcon) in.readObject();
                             video.setIcon(ic);
@@ -90,7 +92,7 @@ public class HostInterface extends JFrame {
                 // Thread for sending data
                 new Thread(() -> {
                     try {
-                        ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+                        out = new ObjectOutputStream(clientSocket.getOutputStream());
 
 //                        webcam = Webcam.getDefault();
                         new Thread(() -> {

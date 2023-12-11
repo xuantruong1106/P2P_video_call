@@ -20,6 +20,8 @@ public class ClientInterface extends JFrame {
     private static JLabel videoIn = new JLabel();
     private ImageIcon ic;
     private BufferedImage br;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
 
     public ClientInterface(String IP_Server, int port, String name) throws ClassNotFoundException {
         SwingUtilities.invokeLater(() -> {
@@ -74,7 +76,7 @@ public class ClientInterface extends JFrame {
                 // Thread for sending data
                 new Thread(() -> {
                     try {
-                        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                        out = new ObjectOutputStream(socket.getOutputStream());
 
                         webcam = Webcam.getDefault();
 
@@ -102,7 +104,7 @@ public class ClientInterface extends JFrame {
                 // Thread for receiving data
                 new Thread(() -> {
                     try {
-                        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                        in = new ObjectInputStream(socket.getInputStream());
                         while (true) {
                             ImageIcon icIn = (ImageIcon) in.readObject();
                             videoIn.setIcon(icIn);

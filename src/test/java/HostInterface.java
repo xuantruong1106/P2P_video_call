@@ -1,3 +1,4 @@
+
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
 
@@ -16,41 +17,42 @@ public class HostInterface extends JFrame {
     private boolean isCameraOn = true;
     private boolean isMicOn = true;
     private static JLabel video = new JLabel();
-    private static JLabel  videoOut = new JLabel();
+    private static JLabel videoOut = new JLabel();
+    private ImageIcon icOut;
+    private BufferedImage br;
+
     public HostInterface(int port, String name) throws ClassNotFoundException {
         SwingUtilities.invokeLater(() -> {
-            
-                setSize(800, 400);
-                setTitle("Host Video Room");
-                setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-                JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
+            setSize(800, 400);
+            setTitle("Host Video Room");
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-                JPanel panelCenter = new JPanel(new BorderLayout());
-                JButton buttonOnOffMic = createButton("IconOnMic.png", "IconOffMic.png");
-                JButton buttonOnOffVideo = createButton("IconOnVideo.png", "IconOffVideo.png");
-                JButton buttonExitVideoRoom = createButton("IconExit.png", null);
-                JPanel buttonPanel = new JPanel();
+            JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
 
+            JPanel panelCenter = new JPanel(new BorderLayout());
+            JButton buttonOnOffMic = createButton("IconOnMic.png", "IconOffMic.png");
+            JButton buttonOnOffVideo = createButton("IconOnVideo.png", "IconOffVideo.png");
+            JButton buttonExitVideoRoom = createButton("IconExit.png", null);
+            JPanel buttonPanel = new JPanel();
 
-                buttonOnOffMic.addActionListener(e -> toggleMic(buttonOnOffMic));
-                buttonOnOffVideo.addActionListener(e -> toggleVideo(buttonOnOffVideo));
-                buttonExitVideoRoom.addActionListener(e -> exitVideoRoom());
+            buttonOnOffMic.addActionListener(e -> toggleMic(buttonOnOffMic));
+            buttonOnOffVideo.addActionListener(e -> toggleVideo(buttonOnOffVideo));
+            buttonExitVideoRoom.addActionListener(e -> exitVideoRoom());
 
-                buttonPanel.add(buttonOnOffMic);
-                buttonPanel.add(buttonOnOffVideo);
-                buttonPanel.add(buttonExitVideoRoom);
+            buttonPanel.add(buttonOnOffMic);
+            buttonPanel.add(buttonOnOffVideo);
+            buttonPanel.add(buttonExitVideoRoom);
 
-                panelCenter.add(buttonPanel, BorderLayout.SOUTH);
-                panelCenter.add(video, BorderLayout.CENTER);
-//                panelCenter.add(videoOut, BorderLayout.EAST);
-                
-                containerPanelLeftAndRight.add(panelCenter);
+            panelCenter.add(buttonPanel, BorderLayout.SOUTH);
+            panelCenter.add(video, BorderLayout.CENTER);
+            panelCenter.add(videoOut, BorderLayout.EAST);
 
-                getContentPane().add(containerPanelLeftAndRight);
-                setVisible(true);
-               
-            
+            containerPanelLeftAndRight.add(panelCenter);
+
+            getContentPane().add(containerPanelLeftAndRight);
+            setVisible(true);
+
         });
         new Thread(() -> {
             try {
@@ -60,43 +62,55 @@ public class HostInterface extends JFrame {
                 System.out.println("Client connected: " + clientSocket);
 
                 ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
-//              ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-                
-//                 ImageIcon icOut;
-//                 BufferedImage br;
-//                Webcam cam = Webcam.getDefault();
-//                
-//                if (cam.isOpen()) {
-//                    cam.close();
-//                }
-//
-//                cam.setViewSize(new Dimension(640, 480));
-//                cam.open();
-//                isCameraOn = true;
-//                isMicOn = true;
-            
-                while (true) {
-                    ImageIcon ic = (ImageIcon) in.readObject();
-                    video.setIcon(ic);
-                    System.out.println("inFromClient");
-                    
-//                    br = cam.getImage();
-//                    icOut = new ImageIcon(br);
-//                    videoOut.setIcon(icOut);
-//                    out.writeObject(icOut);
-//                    out.flush();
-//                    System.out.println("outToHost");
-                    
+                ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+
+                webcam = Webcam.getDefault();
+
+                if (webcam.isOpen()) {
+                    webcam.close();
                 }
+
+                webcam.setViewSize(new Dimension(640, 480));
+                webcam.open();
+                isCameraOn = true;
+                isMicOn = true;
+
+                // Thread for receiving data
+                new Thread(() -> {
+                    try {
+                        while (true) {
+                            ImageIcon ic = (ImageIcon) in.readObject();
+                            video.setIcon(ic);
+                            System.out.println("inFromClient");
+                        }
+                    } catch (IOException | ClassNotFoundException ex) {
+                        Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }).start();
+
+                // Thread for sending data
+                new Thread(() -> {
+                    try {
+                        while (true) {
+                            br = webcam.getImage();
+                            icOut = new ImageIcon(br);
+                            videoOut.setIcon(icOut);
+                            out.writeObject(icOut);
+                            out.flush();
+                            System.out.println("outToHost");
+                        }
+                    } catch (IOException ex) {
+                        Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }).start();
+
             } catch (IOException ex) {
-                Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
                 Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
             }
         }).start();
-    
+
     }
-    
+
     private void toggleMic(JButton buttonOnOffMic) {
         isMicOn = !isMicOn;
         updateButtonIcon(buttonOnOffMic, "IconOnMic.png", "IconOffMic.png");
@@ -121,11 +135,11 @@ public class HostInterface extends JFrame {
     }
 
     private void exitVideoRoom() {
-       MainInterface main = new MainInterface();
+        MainInterface main = new MainInterface();
         main.setVisible(true);
         setVisible(false);
         dispose();
-        
+
     }
 
     private JButton createButton(String iconOnPath, String iconOffPath) {
@@ -133,7 +147,7 @@ public class HostInterface extends JFrame {
         Image scaledImage = iconOn.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         return new JButton(new ImageIcon(scaledImage));
     }
-    
+
 //    public static void main(String[] args) throws ClassNotFoundException {
 //        new HostInterface(1111, "d");
 //    }

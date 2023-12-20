@@ -6,8 +6,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,51 +31,63 @@ public class HostInterface extends JFrame {
     public HostInterface(int port, String name) throws ClassNotFoundException {
         SwingUtilities.invokeLater(() -> {
 
-            setSize(1200, 700);
-            setTitle("Host Video Room");
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-            JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
-
-            JPanel panelCenter = new JPanel(new BorderLayout());
-            JButton buttonOnOffMic = createButton("IconOnMic.png", "IconOffMic.png");
-            JButton buttonOnOffVideo = createButton("IconOnVideo.png", "IconOffVideo.png");
-            JButton buttonExitVideoRoom = createButton("IconExit.png", null);
-            JPanel buttonPanel = new JPanel();
-
-            buttonOnOffMic.addActionListener(e -> toggleMic(buttonOnOffMic));
-            buttonOnOffVideo.addActionListener(e -> toggleVideo(buttonOnOffVideo));
-            buttonExitVideoRoom.addActionListener(e -> {
-                try {
-                    exitVideoRoom();
-                } catch (IOException ex) {
-                    Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            });
-
-            buttonPanel.add(buttonOnOffMic);
-            buttonPanel.add(buttonOnOffVideo);
-            buttonPanel.add(buttonExitVideoRoom);
-
-            JPanel webcamPanel = new JPanel();
-            webcamPanel.setLayout(new BorderLayout());
-            webcam = Webcam.getDefault();
-            webcam.setViewSize(new Dimension(640, 480));
-            
-            WebcamPanel camPanel = new WebcamPanel(webcam);
-            camPanel.setFPSDisplayed(true);
-            camPanel.setDisplayDebugInfo(true);
-            camPanel.setImageSizeDisplayed(true);
-            webcamPanel.add(camPanel, BorderLayout.CENTER);
-
-            panelCenter.add(buttonPanel, BorderLayout.SOUTH);
-            panelCenter.add(video, BorderLayout.EAST);
-            panelCenter.add(webcamPanel, BorderLayout.CENTER);
-
-            containerPanelLeftAndRight.add(panelCenter);
-
-            getContentPane().add(containerPanelLeftAndRight);
-            setVisible(true);
+            try {
+                setSize(1200, 700);
+                setTitle("Host Video Room");
+                setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                
+                JPanel containerPanelLeftAndRight = new JPanel(new GridLayout(1, 2));
+                
+                JPanel panelCenter = new JPanel(new BorderLayout());
+                JButton buttonOnOffMic = createButton("IconOnMic.png", "IconOffMic.png");
+                JButton buttonOnOffVideo = createButton("IconOnVideo.png", "IconOffVideo.png");
+                JButton buttonExitVideoRoom = createButton("IconExit.png", null);
+                JPanel buttonPanel = new JPanel();
+                
+                buttonOnOffMic.addActionListener(e -> toggleMic(buttonOnOffMic));
+                buttonOnOffVideo.addActionListener(e -> toggleVideo(buttonOnOffVideo));
+                buttonExitVideoRoom.addActionListener(e -> {
+                    try {
+                        exitVideoRoom();
+                    } catch (IOException ex) {
+                        Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                });
+                
+                InetAddress ip = InetAddress.getLocalHost();
+                String portString = String.valueOf(port);
+                
+                JLabel ipRoom = new JLabel("IP: " + ip.getHostAddress());
+                JLabel portRoom = new JLabel("Port: " + portString);
+                
+                buttonPanel.add(buttonOnOffMic);
+                buttonPanel.add(buttonOnOffVideo);
+                buttonPanel.add(buttonExitVideoRoom);
+                buttonPanel.add(ipRoom);
+                buttonPanel.add(portRoom);
+                
+                JPanel webcamPanel = new JPanel();
+                webcamPanel.setLayout(new BorderLayout());
+                webcam = Webcam.getDefault();
+                webcam.setViewSize(new Dimension(640, 480));
+                
+                WebcamPanel camPanel = new WebcamPanel(webcam);
+                camPanel.setFPSDisplayed(true);
+                camPanel.setDisplayDebugInfo(true);
+                camPanel.setImageSizeDisplayed(true);
+                webcamPanel.add(camPanel, BorderLayout.CENTER);
+                
+                panelCenter.add(buttonPanel, BorderLayout.SOUTH);
+                panelCenter.add(video, BorderLayout.EAST);
+                panelCenter.add(webcamPanel, BorderLayout.CENTER);
+                
+                containerPanelLeftAndRight.add(panelCenter);
+                
+                getContentPane().add(containerPanelLeftAndRight);
+                setVisible(true);
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
         });
         new Thread(() -> {
@@ -151,12 +166,22 @@ public class HostInterface extends JFrame {
     }
 
     private void exitVideoRoom() throws IOException {
+        if(clientSocket == null)
+        {
+            webcam.close();
+            video.setIcon(null);
+            MainInterface main = new MainInterface();
+            main.setVisible(true);
+            setVisible(false);
+            dispose();
+        }
             serverSocket.close();
             clientSocket.close();
             in.close();
             out.close();
             out.flush();
             webcam.close();
+            video.setIcon(null);
             MainInterface main = new MainInterface();
             main.setVisible(true);
             setVisible(false);

@@ -87,6 +87,7 @@ public class HostInterface extends JFrame {
                 setVisible(true);
             } catch (UnknownHostException ex) {
                 Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
+                video.setIcon(null);
             }
 
         });
@@ -110,6 +111,7 @@ public class HostInterface extends JFrame {
                         }
                     } catch (IOException | ClassNotFoundException ex) {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        video.setIcon(null);
                     }
                 }).start();
 
@@ -133,6 +135,7 @@ public class HostInterface extends JFrame {
                         }
                     } catch (IOException ex) {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        video.setIcon(null);
                     }
                 }).start();
             } catch (IOException ex) {

@@ -97,6 +97,10 @@ public class ClientInterface extends JFrame {
                         }
                     } catch (IOException ex) {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        MainInterface main = new MainInterface();
+                        main.setVisible(true);
+                        setVisible(false);
+                        dispose();
                     }
                 }).start();
 
@@ -111,10 +115,18 @@ public class ClientInterface extends JFrame {
                         }
                     } catch (IOException | ClassNotFoundException ex) {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        MainInterface main = new MainInterface();
+                        main.setVisible(true);
+                        setVisible(false);
+                        dispose();
                     }
                 }).start();
             } catch (IOException ex) {
                 Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
+                MainInterface main = new MainInterface();
+                main.setVisible(true);
+                setVisible(false);
+                dispose();
             }
         }).start();
     }

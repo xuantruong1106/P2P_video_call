@@ -18,7 +18,7 @@ public class ClientInterface extends JFrame {
     private boolean isMicOn = true;
     private static JLabel video = new JLabel();
     private static JLabel videoIn = new JLabel();
-    private ImageIcon ic;
+    private ImageIcon icOut;
     private BufferedImage br;
     private ObjectInputStream in;
     private ObjectOutputStream out;
@@ -82,8 +82,8 @@ public class ClientInterface extends JFrame {
 
                         while (true) {
                             br = webcam.getImage();
-                            ic = new ImageIcon(br);
-                            out.writeObject(ic);
+                            icOut = new ImageIcon(br);
+                            out.writeObject(icOut);
                             out.flush();
                             System.out.println("outToHost");
                         }
@@ -102,12 +102,12 @@ public class ClientInterface extends JFrame {
 
                         while (sendData) {
                             ImageIcon icIn = (ImageIcon) in.readObject();
-                            if (ic == null) {
+                            if (icIn == null) {
                                 // Camera may be off
                                 video.setIcon(null);
                                 System.out.println("Camera is off");
                             } else {
-                                video.setIcon(ic);
+                                video.setIcon(icIn);
                                 System.out.println("inFromHost");
                             }
                         }

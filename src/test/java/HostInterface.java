@@ -94,13 +94,13 @@ public class HostInterface extends JFrame {
                         in = new ObjectInputStream(clientSocket.getInputStream());
 
                         while (true) {
-                            ImageIcon ic = (ImageIcon) in.readObject();
-                            if (ic == null) {
+                            ImageIcon icIn = (ImageIcon) in.readObject();
+                            if (icIn == null) {
                                 // Camera may be off
                                 video.setIcon(null);
                                 System.out.println("Camera is off");
                             } else {
-                                video.setIcon(ic);
+                                video.setIcon(icIn);
                                 System.out.println("inFromClient");
                             }
                         }

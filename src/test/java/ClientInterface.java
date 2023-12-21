@@ -102,8 +102,14 @@ public class ClientInterface extends JFrame {
 
                         while (sendData) {
                             ImageIcon icIn = (ImageIcon) in.readObject();
-                            videoIn.setIcon(icIn);
-                            System.out.println("inFromHost");
+                            if (ic == null) {
+                                // Camera may be off
+                                video.setIcon(null);
+                                System.out.println("Camera is off");
+                            } else {
+                                video.setIcon(ic);
+                                System.out.println("inFromHost");
+                            }
                         }
                     } catch (IOException | ClassNotFoundException ex) {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);

@@ -95,8 +95,14 @@ public class HostInterface extends JFrame {
 
                         while (true) {
                             ImageIcon ic = (ImageIcon) in.readObject();
-                            video.setIcon(ic);
-                            System.out.println("inFromClient");
+                            if (ic == null) {
+                                // Camera may be off
+                                video.setIcon(null);
+                                System.out.println("Camera is off");
+                            } else {
+                                video.setIcon(ic);
+                                System.out.println("inFromClient");
+                            }
                         }
                     } catch (IOException | ClassNotFoundException ex) {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);

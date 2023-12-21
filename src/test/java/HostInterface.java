@@ -19,7 +19,7 @@ public class HostInterface extends JFrame {
     private boolean isCameraOn = true;
     private boolean isMicOn = true;
     private static JLabel video = new JLabel();
-    private static JLabel videoOut = new JLabel();
+//    private static JLabel videoOut = new JLabel();
     private ImageIcon icOut;
     private BufferedImage br;
     private ObjectInputStream in;
@@ -27,7 +27,7 @@ public class HostInterface extends JFrame {
     private Socket clientSocket;
     private ServerSocket serverSocket;
     private WebcamPanel camPanel;
-    private boolean sendData = true;
+//    private boolean sendData = true;
     
     public HostInterface(int port, String name) throws ClassNotFoundException {
         SwingUtilities.invokeLater(() -> {
@@ -94,21 +94,15 @@ public class HostInterface extends JFrame {
                         in = new ObjectInputStream(clientSocket.getInputStream());
 
                         while (true) {
-                            ImageIcon icIn = (ImageIcon) in.readObject();
-                            if (icIn == null) {
-                                // Camera may be off
-                                video.setIcon(null);
-                                System.out.println("Camera is off");
-                            } else {
-                                video.setIcon(icIn);
-                                System.out.println("inFromClient");
-                            }
+                            ImageIcon ic = (ImageIcon) in.readObject();
+                            video.setIcon(ic);
+                            System.out.println("inFromClient");
                         }
                     } catch (IOException | ClassNotFoundException ex) {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
                         video.setIcon(null);
                     }
-                }).start();
+                }).start(); 
 
                 new Thread(() -> {
                     try {
@@ -120,7 +114,7 @@ public class HostInterface extends JFrame {
                             isMicOn = true;
                         }).start();
 
-                        while (sendData) {
+                        while (true) {
 
                             br = webcam.getImage();
                             icOut = new ImageIcon(br);
@@ -179,7 +173,7 @@ public class HostInterface extends JFrame {
         if (webcam != null && !webcam.isOpen()) {
             webcam.open();
             camPanel.start();
-            sendData = true;
+//            sendData = true;
         }
     }
 
@@ -187,7 +181,7 @@ public class HostInterface extends JFrame {
         if (webcam != null && webcam.isOpen()) {
             webcam.close();
             camPanel.stop();
-            sendData = false;
+//            sendData = false;
         }
     }
 
@@ -199,7 +193,7 @@ public class HostInterface extends JFrame {
 
     private void exitVideoRoom() {
     try {
-        sendData = false; // Stop receiving data
+//        sendData = false; // Stop receiving data
 
         if (clientSocket != null) {
             clientSocket.close();

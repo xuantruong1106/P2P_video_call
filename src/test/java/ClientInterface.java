@@ -24,7 +24,7 @@ public class ClientInterface extends JFrame {
     private ObjectOutputStream out;
     private Socket socket;
     private WebcamPanel camPanel;
-    private boolean sendData = true;
+//    private boolean sendData = true;
 
     public ClientInterface(String IP_Server, int port, String name) throws ClassNotFoundException {
 
@@ -81,7 +81,7 @@ public class ClientInterface extends JFrame {
                             isMicOn = true;
                         }).start();
 
-                        while (sendData) {
+                        while (true) {
                             br = webcam.getImage();
                             icOut = new ImageIcon(br);
                             out.writeObject(icOut);
@@ -102,24 +102,16 @@ public class ClientInterface extends JFrame {
                         in = new ObjectInputStream(socket.getInputStream());
 
                         while (true) {
-                            ImageIcon icIn = (ImageIcon) in.readObject();
-                            if (icIn == null) {
-                                // Camera may be off
-                                video.setIcon(null);
-                                System.out.println("Camera is off");
-                            } else {
-                                video.setIcon(icIn);
-                                System.out.println("inFromHost");
-                            }
+                            ImageIcon ic = (ImageIcon) in.readObject();
+                            video.setIcon(ic);
+                            System.out.println("inFromHost");
                         }
                     } catch (IOException | ClassNotFoundException ex) {
                         Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
-                        MainInterface main = new MainInterface();
-                        main.setVisible(true);
-                        setVisible(false);
-                        dispose();
+                        video.setIcon(null);
                     }
-                }).start();
+                }).start(); 
+                
             } catch (IOException ex) {
                 Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
                 MainInterface main = new MainInterface();
@@ -168,7 +160,7 @@ public class ClientInterface extends JFrame {
         if (webcam != null && !webcam.isOpen()) {
             webcam.open();
             camPanel.start();
-            sendData = true;
+//            sendData = true;
         }
     }
 
@@ -176,7 +168,7 @@ public class ClientInterface extends JFrame {
         if (webcam != null && webcam.isOpen()) {
             webcam.close();
             camPanel.stop();
-            sendData = false;
+//            sendData = false;
         }
     }
 

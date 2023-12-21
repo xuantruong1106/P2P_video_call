@@ -23,6 +23,8 @@ public class ClientInterface extends JFrame {
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private Socket socket;
+    private WebcamPanel camPanel;
+    private boolean sendData = true;
 
     public ClientInterface(String IP_Server, int port, String name) throws ClassNotFoundException {
 
@@ -43,13 +45,7 @@ public class ClientInterface extends JFrame {
 
             buttonOnOffMic.addActionListener(e -> toggleMic(buttonOnOffMic));
             buttonOnOffVideo.addActionListener(e -> toggleVideo(buttonOnOffVideo));
-            buttonExitVideoRoom.addActionListener(e -> {
-                try {
-                    exitVideoRoom();
-                } catch (IOException ex) {
-                    Logger.getLogger(ClientInterface.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            });
+            buttonExitVideoRoom.addActionListener(e -> exitVideoRoom());
 
             buttonPanel.add(buttonOnOffMic);
             buttonPanel.add(buttonOnOffVideo);
@@ -108,7 +104,7 @@ public class ClientInterface extends JFrame {
                     try {
                         in = new ObjectInputStream(socket.getInputStream());
 
-                        while (true) {
+                        while (sendData) {
                             ImageIcon icIn = (ImageIcon) in.readObject();
                             videoIn.setIcon(icIn);
                             System.out.println("inFromHost");
@@ -132,49 +128,88 @@ public class ClientInterface extends JFrame {
     }
 
     private void toggleMic(JButton buttonOnOffMic) {
-        isMicOn = !isMicOn;
-        updateButtonIcon(buttonOnOffMic, "IconOnMic.png", "IconOffMic.png");
+
+        if (isMicOn) {
+            isMicOn = !isMicOn;
+            updateButtonIcon(buttonOnOffMic, "IconOffMic.png");
+        } else {
+            isMicOn = !isMicOn;
+            updateButtonIcon(buttonOnOffMic, "IconOnMic.png");
+        }
+
     }
 
-    private void toggleVideo(JButton buttonOnOffVideo) {
+    private void toggleVideo(JButton buttonOnOffVideo){
         if (isCameraOn) {
-            webcam.open();
-            isCameraOn = false;
-            updateButtonIcon(buttonOnOffVideo, "IconOnVideo.png", "IconOffVideo.png");
+            updateButtonIcon(buttonOnOffVideo, "IconOffVideo.png");
+            stopWebcam();
+            isCameraOn = !isCameraOn;
         } else {
-            webcam.close();
-            isCameraOn = true;
-            updateButtonIcon(buttonOnOffVideo, "IconOffVideo.png", "IconOnVideo.png");
+            updateButtonIcon(buttonOnOffVideo, "IconOnVideo.png");
+            startWebcam();
+            isCameraOn = !isCameraOn;
+        }
+    }
+    
+    private void startWebcam() {
+        if (webcam != null && !webcam.isOpen()) {
+            webcam.open();
+            camPanel.start();
+            sendData = true;
         }
     }
 
-    private void updateButtonIcon(JButton button, String iconOnPath, String iconOffPath) {
+    private void stopWebcam(){
+        if (webcam != null && webcam.isOpen()) {
+            webcam.close();
+            camPanel.stop();
+            sendData = false;
+        }
+    }
+
+    private void updateButtonIcon(JButton button, String iconOnPath) {
         ImageIcon iconOn = new ImageIcon("src/main/java/com/mycompany/baitaplonmonhoc/img/" + iconOnPath);
         Image scaledImage = iconOn.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         button.setIcon(new ImageIcon(scaledImage));
     }
 
-    private void exitVideoRoom() throws IOException {
-        if (socket.isClosed()) {
-            out.flush();
-            webcam.close();
-            MainInterface main = new MainInterface();
-            main.setVisible(true);
-            setVisible(false);
-            dispose();
-        } else {
+    private void exitVideoRoom() {
+    try {
+       
+
+        if (socket != null) {
             socket.close();
-            in.close();
-            out.close();
-            out.flush();
-            webcam.close();
-            MainInterface main = new MainInterface();
-            main.setVisible(true);
-            setVisible(false);
-            dispose();
+            socket = null;
         }
 
+        if (in != null) {
+            in.close();
+            in = null;
+        }
+
+        if (out != null) {
+            out.close();
+            out.flush();
+            out = null;
+        }
+
+        if (webcam != null) {
+            webcam.close();
+            webcam = null;
+        }
+        
+        video.setIcon(null);
+        
+    } catch (IOException e) {
+        e.printStackTrace(); // Handle or log the exception as needed
+    } finally {
+        MainInterface main = new MainInterface();
+        main.setVisible(true);
+        setVisible(false);
+        dispose();
     }
+}
+
 
     private JButton createButton(String iconOnPath, String iconOffPath) {
         ImageIcon iconOn = new ImageIcon("src/main/java/com/mycompany/baitaplonmonhoc/img/" + iconOnPath);

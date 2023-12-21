@@ -53,12 +53,8 @@ public class ClientInterface extends JFrame {
 
             JPanel webcamPanel = new JPanel();
             webcamPanel.setLayout(new BorderLayout());
-            webcam = Webcam.getDefault();
-            webcam.setViewSize(new Dimension(640, 480));
-            WebcamPanel camPanel = new WebcamPanel(webcam);
-            camPanel.setFPSDisplayed(true);
-            camPanel.setDisplayDebugInfo(true);
-            camPanel.setImageSizeDisplayed(true);
+            camPanel = webcamPanel();
+  
             webcamPanel.add(camPanel, BorderLayout.CENTER);
 
             panelCenter.add(buttonPanel, BorderLayout.SOUTH);
@@ -126,7 +122,17 @@ public class ClientInterface extends JFrame {
             }
         }).start();
     }
+    
+    private WebcamPanel webcamPanel() {
+        
+        webcam = Webcam.getDefault();
+        webcam.setViewSize(new Dimension(640, 480));
 
+        camPanel = new WebcamPanel(webcam);        
+
+        return camPanel;
+    }
+    
     private void toggleMic(JButton buttonOnOffMic) {
 
         if (isMicOn) {

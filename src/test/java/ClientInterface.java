@@ -75,11 +75,11 @@ public class ClientInterface extends JFrame {
                     try {
                         out = new ObjectOutputStream(socket.getOutputStream());
 
-                        new Thread(() -> {
+                        
                             webcam.open();
                             isCameraOn = true;
                             isMicOn = true;
-                        }).start();
+                       
 
                         while (true) {
                             br = webcam.getImage();
@@ -222,3 +222,4 @@ public class ClientInterface extends JFrame {
         return new JButton(new ImageIcon(scaledImage));
     }
 }
+ 

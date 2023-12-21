@@ -133,6 +133,7 @@ public class HostInterface extends JFrame {
                         video.setIcon(null);
                     }
                 }).start();
+                
             } catch (IOException ex) {
                 Logger.getLogger(HostInterface.class.getName()).log(Level.SEVERE, null, ex);
                 video.setIcon(null);

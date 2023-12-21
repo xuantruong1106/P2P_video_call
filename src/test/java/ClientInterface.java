@@ -75,12 +75,13 @@ public class ClientInterface extends JFrame {
                     try {
                         out = new ObjectOutputStream(socket.getOutputStream());
 
-                        webcam = Webcam.getDefault();
-                        webcam.open();
-                        isCameraOn = true;
-                        isMicOn = true;
+                        new Thread(() -> {
+                            webcam.open();
+                            isCameraOn = true;
+                            isMicOn = true;
+                        }).start();
 
-                        while (true) {
+                        while (sendData) {
                             br = webcam.getImage();
                             icOut = new ImageIcon(br);
                             out.writeObject(icOut);
@@ -100,7 +101,7 @@ public class ClientInterface extends JFrame {
                     try {
                         in = new ObjectInputStream(socket.getInputStream());
 
-                        while (sendData) {
+                        while (true) {
                             ImageIcon icIn = (ImageIcon) in.readObject();
                             if (icIn == null) {
                                 // Camera may be off
